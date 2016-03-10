@@ -5,10 +5,10 @@ module Graphics.D3.Selection
   , Exit()
   , Transition()
   , Void()
-  , AttrValue
-  , Existing
-  , Appendable
-  , Clickable
+  , class AttrValue
+  , class Existing
+  , class Appendable
+  , class Clickable
   , rootSelect
   , rootSelectAll
   , select
@@ -40,9 +40,13 @@ module Graphics.D3.Selection
 
 import Graphics.D3.Base
 import Control.Monad.Eff
+import Control.Monad.Eff.Console
 
 import Data.Foreign
 import Data.Foreign.EasyFFI
+
+import Data.Nullable
+import Data.Function.Eff
 
 import Prelude ( Unit() )
 
@@ -66,8 +70,79 @@ class AttrValue a
 instance attrValNumber :: AttrValue Number
 instance attrValString :: AttrValue String
 
-rootSelect :: String -> D3Eff (Selection Void)
-rootSelect = ffi ["selector", ""] "d3.select(selector)"
+-- | OLD "EasyFFI" way
+-- rootSelect = ffi ["selector", ""] "d3.select(selector)"
+
+-- | NEW "FunctionEff" way
+-- rootSelect :: String -> D3Eff (Selection Void)
+foreign import rootSelectImpl :: forall eff.
+  EffFn1 (d3 :: D3 | eff) String (Selection Void)
+
+rootSelect :: forall eff.
+  String -> Eff (d3 :: D3 | eff) (Selection Void)
+rootSelect = runEffFn1 rootSelectImpl
+
+
+-- | OLD "EasyFFI" way
+-- unsafeRemove :: forall s. s -> D3Eff Unit
+-- unsafeRemove = ffi ["selection", ""] "selection.remove()"
+
+-- | NEW "FunctionEff" way
+foreign import unsafeRemoveImpl :: forall s eff.
+  EffFn1 (d3 :: D3 | eff) s Unit
+
+unsafeRemove :: forall s eff.
+  s -> Eff (d3 :: D3 | eff) Unit
+unsafeRemove = runEffFn1 unsafeRemoveImpl
+
+-- | Now try to generalize example to the actual callbacks we need in D3
+-- original typeclass definition
+-- class Clickable c where
+--   onClick :: forall eff r. (Foreign -> Eff eff r) -> c -> D3Eff c
+-- instance clickableSelection :: Clickable (Selection a) where
+--   onClick = ffi ["callback", "clickable", ""] "clickable.on('click', function(data) { callback(data)(); })"
+
+-- | new typeclass definition
+class Clickable c where
+  onClick :: forall eff. (Foreign -> Eff (d3 :: D3 | eff) Unit) -> c -> Eff (d3 :: D3 | eff) c
+  onDoubleClick :: forall eff. (Foreign -> Eff (d3 :: D3 | eff) Unit) -> c -> Eff (d3 :: D3 | eff) c
+instance clickableSelectionI :: Clickable (Selection a) where
+  onClick callback clickableSelection       = runEffFn2 onClickImpl       clickableSelection (mkEffFn1 callback)
+  onDoubleClick callback clickableSelection = runEffFn2 onDoubleClickImpl clickableSelection (mkEffFn1 callback)
+
+-- foreign function that will attach a callback to our clickable selection
+foreign import onClickImpl :: forall eff a d. -- (Clickable => c)
+ EffFn2 (d3 :: D3 | eff)
+        (Selection a)             -- 1st argument for EffFn2, the selection itself
+        (EffFn1 (d3 :: D3 | eff)  -- 2nd argument for EffFn2, the callback function
+                 d                  -- 1st and only argument for EffFn1, the datum given to the callback
+                 Unit)              -- result of EffFn1, callback result is just Unit
+        (Selection a)             -- result of EffFn2, returns selection so that it can be chained
+
+foreign import onDoubleClickImpl :: forall eff a d. -- (Clickable => c)
+ EffFn2 (d3 :: D3 | eff)
+        (Selection a)             -- 1st argument for EffFn2, the selection itself
+        (EffFn1 (d3 :: D3 | eff)  -- 2nd argument for EffFn2, the callback function
+                 d                  -- 1st and only argument for EffFn1, the datum given to the callback
+                 Unit)              -- result of EffFn1, callback result is just Unit
+        (Selection a)             -- result of EffFn2, returns selection so that it can be chained
+
+
+
+
+-- purescript function that wraps the foreign function to attach callback to a clickable selection
+-- attachCallBackPS :: forall eff a d. -- (Clickable => c)
+--   (d -> Eff (d3 :: D3 | eff) Unit) ->
+--   (Selection a) ->
+--   Eff (d3 :: D3 | eff) Unit
+-- attachCallBackPS callback clickableSelection =
+--   runEffFn2 onSClickImpl clickableSelection (mkEffFn1 callback)
+
+
+
+
+
+
 
 rootSelectAll :: String -> D3Eff (Selection Void)
 rootSelectAll = ffi ["selector", ""] "d3.selectAll(selector)"
@@ -92,9 +167,6 @@ transition = ffi ["selection", ""] "selection.transition()"
 
 unsafeAppend :: forall x y. String -> x -> D3Eff y
 unsafeAppend = ffi ["tag", "selection", ""] "selection.append(tag)"
-
-unsafeRemove :: forall s. s -> D3Eff Unit
-unsafeRemove = ffi ["selection", ""] "selection.remove()"
 
 unsafeAttr :: forall d v s. (AttrValue v) => String -> v -> s -> D3Eff s
 unsafeAttr = ffi ["key", "val", "selection", ""] "selection.attr(key, val)"
@@ -219,12 +291,3 @@ instance existingTransition :: Existing Transition where
   text' = unsafeText'
   text'' = unsafeText''
   remove = unsafeRemove
-
-class Clickable c where
-  onClick :: forall eff r. (Foreign -> Eff eff r) -> c -> D3Eff c
-  onDoubleClick :: forall eff r. (Foreign -> Eff eff r) -> c -> D3Eff c
-
-instance clickableSelection :: Clickable (Selection a) where
-  -- NOTE: psc complains about cycles unless onclick/onDoubleClick are inlined
-  onClick = ffi ["callback", "clickable", ""] "clickable.on('click', function(data) { callback(data)(); })"
-  onDoubleClick = ffi ["callback", "clickable", ""] "clickable.on('dblclick', function (data) { callback(data)(); })"

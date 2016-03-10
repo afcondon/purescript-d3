@@ -15,5 +15,9 @@
     "purescript-foreign": "^0.7.0"
   },
   "main": "src/**/*.purs",
-  "private": false
+  "private": false,
+  "devDependencies": {
+    "purescript-eff-functions": "^0.1.1",
+    "purescript-nullable": "^0.2.1"
+  }
 }
