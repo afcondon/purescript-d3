@@ -3,11 +3,13 @@ module Graphics.D3.Interpolate
   , makeInterpolator
   ) where
 
-import Data.Foreign.EasyFFI
 
-ffi = unsafeForeignFunction
+-- | No need for EffFn stuff here AFAIK - Interpolator not used in current examples and i think
+-- | probably needs a lot more coverage than this one function anyway (see comprehensive D3 docs) - afc
+
+-- import Graphics.D3.Base
+-- import Data.Function.Eff (EffFn1, runEffFn1)
 
 foreign import data Interpolator :: * -> *
 
-makeInterpolator :: forall a. (a -> a -> Number -> a) -> Interpolator a
-makeInterpolator = ffi ["f"] "function (x, y) { return f(x)(y); }"
+foreign import makeInterpolator :: forall a. (a -> a -> Number -> a) -> Interpolator a

@@ -87,6 +87,9 @@ type D3Eff a = forall e. Eff (d3 :: D3 | e) a
 data Interpolator :: * -> *
 ```
 
+No need for EffFn stuff here AFAIK - Interpolator not used in current examples and i think
+probably needs a lot more coverage than this one function anyway (see comprehensive D3 docs) - afc
+
 #### `makeInterpolator`
 
 ``` purescript
@@ -473,9 +476,9 @@ data Selection :: * -> *
 
 ##### Instances
 ``` purescript
-Clickable (Selection a)
 Appendable Selection
 Existing Selection
+Clickable (Selection a)
 ```
 
 #### `Update`
@@ -540,22 +543,6 @@ AttrValue String
 
 ``` purescript
 rootSelect :: forall eff. String -> Eff (d3 :: D3 | eff) (Selection Void)
-```
-
-#### `Clickable`
-
-``` purescript
-class Clickable c where
-  onClick :: forall eff. (Foreign -> Eff (d3 :: D3 | eff) Unit) -> c -> Eff (d3 :: D3 | eff) c
-  onDoubleClick :: forall eff. (Foreign -> Eff (d3 :: D3 | eff) Unit) -> c -> Eff (d3 :: D3 | eff) c
-```
-
-Now try to generalize example to the actual callbacks we need in D3
-new typeclass definition
-
-##### Instances
-``` purescript
-Clickable (Selection a)
 ```
 
 #### `rootSelectAll`
@@ -671,6 +658,19 @@ class Existing s where
 Existing Selection
 Existing Update
 Existing Transition
+```
+
+#### `Clickable`
+
+``` purescript
+class Clickable c where
+  onClick :: forall eff. (Foreign -> Eff (d3 :: D3 | eff) Unit) -> c -> Eff (d3 :: D3 | eff) c
+  onDoubleClick :: forall eff. (Foreign -> Eff (d3 :: D3 | eff) Unit) -> c -> Eff (d3 :: D3 | eff) c
+```
+
+##### Instances
+``` purescript
+Clickable (Selection a)
 ```
 
 
@@ -800,7 +800,7 @@ _left-associative / precedence -1_
 #### `(...)`
 
 ``` purescript
-(...) :: forall t4373 t4377. t4377 -> (t4377 -> t4373) -> t4373
+(...) :: forall t4371 t4375. t4375 -> (t4375 -> t4371) -> t4371
 ```
 
 _left-associative / precedence -1_
