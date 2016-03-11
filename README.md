@@ -565,12 +565,6 @@ select :: forall d eff. String -> Selection d -> Eff (d3 :: D3 | eff) (Selection
 selectAll :: forall d eff. String -> Selection d -> Eff (d3 :: D3 | eff) (Selection Void)
 ```
 
-#### `bindData`
-
-``` purescript
-bindData :: forall oldData newData eff. Array newData -> Selection oldData -> Eff (d3 :: D3 | eff) (Update newData)
-```
-
 #### `enter`
 
 ``` purescript
@@ -581,12 +575,6 @@ enter :: forall d eff. Update d -> Eff (d3 :: D3 | eff) (Enter d)
 
 ``` purescript
 exit :: forall d eff. Update d -> Eff (d3 :: D3 | eff) (Exit d)
-```
-
-#### `transition`
-
-``` purescript
-transition :: forall s d eff. (Existing s) => s d -> Eff (d3 :: D3 | eff) (Transition d)
 ```
 
 #### `delay`
@@ -623,6 +611,18 @@ duration' :: forall d eff. (d -> Number) -> Transition d -> Eff (d3 :: D3 | eff)
 
 ``` purescript
 duration'' :: forall d eff. (d -> Number -> Number) -> Transition d -> Eff (d3 :: D3 | eff) (Transition d)
+```
+
+#### `bindData`
+
+``` purescript
+bindData :: forall od nd eff. Array nd -> Selection od -> Eff (d3 :: D3 | eff) (Update nd)
+```
+
+#### `transition`
+
+``` purescript
+transition :: forall s d eff. (Existing s) => s d -> Eff (d3 :: D3 | eff) (Transition d)
 ```
 
 #### `Appendable`

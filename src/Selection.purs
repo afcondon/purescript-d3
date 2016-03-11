@@ -67,158 +67,110 @@ class AttrValue a
 instance attrValNumber :: AttrValue Number
 instance attrValString :: AttrValue String
 
-foreign import rootSelectImpl :: forall eff.
-  EffFn1 (d3::D3|eff) String (Selection Void)
-foreign import unsafeRemoveImpl :: forall s eff.
-  EffFn1 (d3::D3|eff) s Unit
-foreign import rootSelectAllImpl :: forall eff.
-  EffFn1 (d3::D3|eff) String (Selection Void)
-foreign import selectImpl :: forall d eff.
-  EffFn2 (d3::D3|eff) String (Selection d) (Selection d)
-foreign import selectAllImpl :: forall d eff.
-  EffFn2 (d3::D3|eff) String (Selection d) (Selection Void)
-foreign import bindDataImpl :: forall oldData newData eff.
-  EffFn2 (d3::D3|eff) (Array newData) (Selection oldData) (Update newData)
-foreign import enterImpl :: forall d eff.
-  EffFn1 (d3::D3|eff) (Update d) (Enter d)
-foreign import exitImpl :: forall eff d.
-  EffFn1 (d3::D3|eff) (Update d) (Exit d)
-foreign import transitionImpl :: forall eff s d. (Existing s) =>
-  EffFn1 (d3::D3|eff) (s d) (Transition d)
-foreign import unsafeAppendImpl :: forall eff x y.
-  EffFn2 (d3::D3|eff) String x y
-foreign import unsafeAttrImpl :: forall eff d v s. (AttrValue v) =>
-  EffFn3 (d3::D3|eff) String v s s
-foreign import unsafeAttrImplP :: forall eff d v s. (AttrValue v) =>
-  EffFn3 (d3::D3|eff) String (d -> v) s  s
-foreign import unsafeAttrImplPP :: forall eff d v s. (AttrValue v) =>
-  EffFn3 (d3::D3|eff) String (d -> Number -> v) s  s
-foreign import unsafeStyleImpl :: forall eff d s.
-  EffFn3 (d3::D3|eff) String String s  s
-foreign import unsafeStyleImplP :: forall eff d s.
-  EffFn3 (d3::D3|eff) String (d -> String) s  s
-foreign import unsafeStyleImplPP :: forall eff d s.
-  EffFn3 (d3::D3|eff) String (d -> Number -> String) s  s
-foreign import unsafeTextImpl :: forall eff d s.
-  EffFn2 (d3::D3|eff) String s  s
-foreign import unsafeTextImplP :: forall eff d s.
-  EffFn2 (d3::D3|eff) (d -> String) s  s
-foreign import unsafeTextImplPP :: forall eff d s.
-  EffFn2 (d3::D3|eff) (d -> Number -> String) s  s
-foreign import delayImpl :: forall eff d.
-  EffFn2 (d3::D3|eff) Number (Transition d)  (Transition d)-- Transition-only stuff
-foreign import delayImplP :: forall eff d.
-  EffFn2 (d3::D3|eff) (d -> Number) (Transition d) (Transition d)
-foreign import delayImplPP :: forall eff d.
-  EffFn2 (d3::D3|eff) (d -> Number -> Number) (Transition d) (Transition d)
-foreign import durationImpl :: forall eff d.
-  EffFn2 (d3::D3|eff) Number (Transition d) (Transition d)
-foreign import durationImplP :: forall eff d.
-  EffFn2 (d3::D3|eff) (d -> Number) (Transition d) (Transition d)
-foreign import durationImplPP :: forall eff d.
-  EffFn2 (d3::D3|eff) (d -> Number -> Number) (Transition d) (Transition d)
+foreign import rootSelectImpl     :: forall eff.      EffFn1 (d3::D3|eff) String (Selection Void)
+foreign import unsafeRemoveImpl   :: forall s eff.    EffFn1 (d3::D3|eff) s Unit
+foreign import rootSelectAllImpl  :: forall eff.      EffFn1 (d3::D3|eff) String (Selection Void)
+foreign import selectImpl         :: forall d eff.    EffFn2 (d3::D3|eff) String (Selection d) (Selection d)
+foreign import selectAllImpl      :: forall d eff.    EffFn2 (d3::D3|eff) String (Selection d) (Selection Void)
+foreign import enterImpl          :: forall d eff.    EffFn1 (d3::D3|eff) (Update d) (Enter d)
+foreign import exitImpl           :: forall eff d.    EffFn1 (d3::D3|eff) (Update d) (Exit d)
+foreign import unsafeAppendImpl   :: forall eff x y.  EffFn2 (d3::D3|eff) String x y
+foreign import unsafeStyleImpl    :: forall eff d s.  EffFn3 (d3::D3|eff) String String s  s
+foreign import unsafeStyleImplP   :: forall eff d s.  EffFn3 (d3::D3|eff) String (d -> String) s  s
+foreign import unsafeStyleImplPP  :: forall eff d s.  EffFn3 (d3::D3|eff) String (d -> Number -> String) s  s
+foreign import unsafeTextImpl     :: forall eff d s.  EffFn2 (d3::D3|eff) String s  s
+foreign import unsafeTextImplP    :: forall eff d s.  EffFn2 (d3::D3|eff) (d -> String) s  s
+foreign import unsafeTextImplPP   :: forall eff d s.  EffFn2 (d3::D3|eff) (d -> Number -> String) s  s
+foreign import delayImpl          :: forall eff d.    EffFn2 (d3::D3|eff) Number (Transition d)  (Transition d)-- Transition-only stuff
+foreign import delayImplP         :: forall eff d.    EffFn2 (d3::D3|eff) (d -> Number) (Transition d) (Transition d)
+foreign import delayImplPP        :: forall eff d.    EffFn2 (d3::D3|eff) (d -> Number -> Number) (Transition d) (Transition d)
+foreign import durationImpl       :: forall eff d.    EffFn2 (d3::D3|eff) Number (Transition d) (Transition d)
+foreign import durationImplP      :: forall eff d.    EffFn2 (d3::D3|eff) (d -> Number) (Transition d) (Transition d)
+foreign import durationImplPP     :: forall eff d.    EffFn2 (d3::D3|eff) (d -> Number -> Number) (Transition d) (Transition d)
+
+foreign import bindDataImpl       :: forall od nd eff. EffFn2 (d3::D3|eff) (Array nd) (Selection od) (Update nd) -- od / oldData, nd / newData
+
+foreign import transitionImpl     :: forall eff s d.   (Existing s)  => EffFn1 (d3::D3|eff) (s d) (Transition d)
+foreign import unsafeAttrImpl     :: forall eff d v s. (AttrValue v) => EffFn3 (d3::D3|eff) String v s s
+foreign import unsafeAttrImplP    :: forall eff d v s. (AttrValue v) => EffFn3 (d3::D3|eff) String (d -> v) s  s
+foreign import unsafeAttrImplPP   :: forall eff d v s. (AttrValue v) => EffFn3 (d3::D3|eff) String (d -> Number -> v) s  s
 
 -- | ===================================================================================
-
-rootSelect :: forall eff.
-  String -> Eff (d3::D3|eff) (Selection Void)
+rootSelect    :: forall eff.      String -> Eff (d3::D3|eff) (Selection Void)
 rootSelect = runEffFn1 rootSelectImpl
 
-unsafeRemove :: forall s eff.
-  s -> Eff (d3::D3|eff) Unit
+unsafeRemove  :: forall s eff.    s -> Eff (d3::D3|eff) Unit
 unsafeRemove = runEffFn1 unsafeRemoveImpl
 
-rootSelectAll :: forall eff.
-  String -> Eff (d3::D3|eff) (Selection Void)
+rootSelectAll :: forall eff.      String -> Eff (d3::D3|eff) (Selection Void)
 rootSelectAll = runEffFn1 rootSelectAllImpl
 
-select :: forall d eff.
-  String -> Selection d -> Eff (d3::D3|eff) (Selection d)
+select        :: forall d eff.    String -> Selection d -> Eff (d3::D3|eff) (Selection d)
 select = runEffFn2 selectImpl
 
-selectAll :: forall d eff.
-  String -> Selection d -> Eff (d3::D3|eff) (Selection Void)
+selectAll     :: forall d eff.    String -> Selection d -> Eff (d3::D3|eff) (Selection Void)
 selectAll = runEffFn2 selectAllImpl
 
-bindData :: forall oldData newData eff.
-  Array newData -> Selection oldData -> Eff (d3::D3|eff) (Update newData)
-bindData = runEffFn2 bindDataImpl
-
-enter :: forall d eff.
-  Update d -> Eff (d3::D3|eff) (Enter d)
+enter         :: forall d eff.    Update d -> Eff (d3::D3|eff) (Enter d)
 enter = runEffFn1 enterImpl
 
-exit :: forall d eff.
-  Update d -> Eff (d3::D3|eff) (Exit d)
+exit          :: forall d eff.    Update d -> Eff (d3::D3|eff) (Exit d)
 exit = runEffFn1 exitImpl
 
-transition :: forall s d eff. (Existing s) =>
-  s d -> Eff (d3::D3|eff) (Transition d)
-transition = runEffFn1 transitionImpl
-
-unsafeAppend :: forall x y eff.
-  String -> x -> Eff (d3::D3|eff) y
+unsafeAppend  :: forall x y eff.  String -> x -> Eff (d3::D3|eff) y
 unsafeAppend = runEffFn2 unsafeAppendImpl
 
-unsafeAttr :: forall d v s eff. (AttrValue v) =>
-  String -> v -> s -> Eff (d3::D3|eff) s
-unsafeAttr = runEffFn3 unsafeAttrImpl
-
-unsafeAttr' :: forall d v s eff. (AttrValue v) =>
-  String -> (d -> v) -> s -> Eff (d3::D3|eff) s
-unsafeAttr' = runEffFn3 unsafeAttrImplP
-
-unsafeAttr'' :: forall d v s eff. (AttrValue v) =>
-  String -> (d -> Number -> v) -> s -> Eff (d3::D3|eff) s
-unsafeAttr'' = runEffFn3 unsafeAttrImplPP
-
-unsafeStyle :: forall d s eff.
-  String -> String -> s -> Eff (d3::D3|eff) s
+unsafeStyle   :: forall d s eff.  String -> String -> s -> Eff (d3::D3|eff) s
 unsafeStyle = runEffFn3 unsafeStyleImpl
 
-unsafeStyle' :: forall d s eff.
-  String -> (d -> String) -> s -> Eff (d3::D3|eff) s
+unsafeStyle'  :: forall d s eff.  String -> (d -> String) -> s -> Eff (d3::D3|eff) s
 unsafeStyle' = runEffFn3 unsafeStyleImplP
 
-unsafeStyle'' :: forall d s eff.
-  String -> (d -> Number -> String) -> s -> Eff (d3::D3|eff) s
+unsafeStyle'' :: forall d s eff.  String -> (d -> Number -> String) -> s -> Eff (d3::D3|eff) s
 unsafeStyle'' = runEffFn3 unsafeStyleImplPP
 
-unsafeText :: forall d s eff.
-  String -> s -> Eff (d3::D3|eff) s
+unsafeText    :: forall d s eff.  String -> s -> Eff (d3::D3|eff) s
 unsafeText = runEffFn2 unsafeTextImpl
 
-unsafeText' :: forall d s eff.
-  (d -> String) -> s -> Eff (d3::D3|eff) s
+unsafeText'   :: forall d s eff.  (d -> String) -> s -> Eff (d3::D3|eff) s
 unsafeText' = runEffFn2 unsafeTextImplP
 
-unsafeText'' :: forall d s eff.
-  (d -> Number -> String) -> s -> Eff (d3::D3|eff) s
+unsafeText''  :: forall d s eff.  (d -> Number -> String) -> s -> Eff (d3::D3|eff) s
 unsafeText'' = runEffFn2 unsafeTextImplPP
 
-delay :: forall d eff.
-  Number -> Transition d -> Eff (d3::D3|eff) (Transition d)
+delay         :: forall d eff.    Number -> Transition d -> Eff (d3::D3|eff) (Transition d)
 delay = runEffFn2 delayImpl
 
-delay' :: forall d eff.
-  (d -> Number) -> Transition d -> Eff (d3::D3|eff) (Transition d)
+delay'        :: forall d eff.    (d -> Number) -> Transition d -> Eff (d3::D3|eff) (Transition d)
 delay' = runEffFn2 delayImplP
 
-delay'' :: forall d eff.
-  (d -> Number -> Number) -> Transition d -> Eff (d3::D3|eff) (Transition d)
+delay''       :: forall d eff.    (d -> Number -> Number) -> Transition d -> Eff (d3::D3|eff) (Transition d)
 delay'' = runEffFn2 delayImplPP
 
-duration :: forall d eff.
-  Number -> Transition d -> Eff (d3::D3|eff) (Transition d)
+duration      :: forall d eff.    Number -> Transition d -> Eff (d3::D3|eff) (Transition d)
 duration = runEffFn2 durationImpl
 
-duration' :: forall d eff.
-  (d -> Number) -> Transition d -> Eff (d3::D3|eff) (Transition d)
+duration'     :: forall d eff.    (d -> Number) -> Transition d -> Eff (d3::D3|eff) (Transition d)
 duration' = runEffFn2 durationImplP
 
-duration'' :: forall d eff.
-  (d -> Number -> Number) -> Transition d -> Eff (d3::D3|eff) (Transition d)
+duration''    :: forall d eff.    (d -> Number -> Number) -> Transition d -> Eff (d3::D3|eff) (Transition d)
 duration'' = runEffFn2 durationImplPP
+
+bindData      :: forall od nd eff. Array nd -> Selection od -> Eff (d3::D3|eff) (Update nd)
+bindData = runEffFn2 bindDataImpl
+
+transition    :: forall s d eff.    (Existing s)  =>  s d -> Eff (d3::D3|eff) (Transition d)
+transition    = runEffFn1 transitionImpl
+
+unsafeAttr    :: forall d v s eff.  (AttrValue v) =>  String -> v -> s -> Eff (d3::D3|eff) s
+unsafeAttr    = runEffFn3 unsafeAttrImpl
+
+unsafeAttr'   :: forall d v s eff.  (AttrValue v) =>  String -> (d -> v) -> s -> Eff (d3::D3|eff) s
+unsafeAttr'   = runEffFn3 unsafeAttrImplP
+
+unsafeAttr''  :: forall d v s eff.  (AttrValue v) =>  String -> (d -> Number -> v) -> s -> Eff (d3::D3|eff) s
+unsafeAttr''  = runEffFn3 unsafeAttrImplPP
+
 
 -- Selection-y things which can be appended to / inserted into
 class Appendable s where
@@ -235,16 +187,16 @@ instance appendableEnter      :: Appendable Enter where
 
 -- Selection-y things that contain existing DOM elements
 class Existing s where
-  attr :: forall d v eff. (AttrValue v) => String -> v -> s d -> Eff (d3::D3|eff) (s d)
-  attr' :: forall d v eff. (AttrValue v) => String -> (d -> v) -> s d -> Eff (d3::D3|eff) (s d)
-  attr'' :: forall d v eff. (AttrValue v) => String -> (d -> Number -> v) -> s d -> Eff (d3::D3|eff) (s d)
-  style :: forall d eff. String -> String -> s d -> Eff (d3::D3|eff) (s d)
-  style' :: forall d eff. String -> (d -> String) -> s d -> Eff (d3::D3|eff) (s d)
-  style'' :: forall d eff. String -> (d -> Number -> String) -> s d -> Eff (d3::D3|eff) (s d)
-  text :: forall d eff. String -> s d -> Eff (d3::D3|eff) (s d)
-  text' :: forall d eff. (d -> String) -> s d -> Eff (d3::D3|eff) (s d)
-  text'' :: forall d eff. (d -> Number -> String) -> s d -> Eff (d3::D3|eff) (s d)
-  remove :: forall d eff. s d -> Eff (d3::D3|eff) Unit
+  attr    :: forall d v eff. (AttrValue v) => String -> v -> s d -> Eff (d3::D3|eff) (s d)
+  attr'   :: forall d v eff. (AttrValue v) => String -> (d -> v) -> s d -> Eff (d3::D3|eff) (s d)
+  attr''  :: forall d v eff. (AttrValue v) => String -> (d -> Number -> v) -> s d -> Eff (d3::D3|eff) (s d)
+  style   :: forall d eff.                    String -> String -> s d -> Eff (d3::D3|eff) (s d)
+  style'  :: forall d eff.                    String -> (d -> String) -> s d -> Eff (d3::D3|eff) (s d)
+  style'' :: forall d eff.                    String -> (d -> Number  -> String) -> s d -> Eff (d3::D3|eff) (s d)
+  text    :: forall d eff.                    String -> s d -> Eff (d3::D3|eff) (s d)
+  text'   :: forall d eff.             (d -> String) -> s d -> Eff (d3::D3|eff) (s d)
+  text''  :: forall d eff.   (d -> Number -> String) -> s d -> Eff (d3::D3|eff) (s d)
+  remove  :: forall d eff.                       s d -> Eff (d3::D3|eff) Unit
 
 instance existingSelection :: Existing Selection where
   attr = unsafeAttr

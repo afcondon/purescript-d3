@@ -3,35 +3,35 @@
 
 // module Graphics.D3.Selection
 
-exports.rootSelectImpl = d3.select
-exports.unsafeRemoveImpl = d3.selection.prototype.remove(this)
+exports.rootSelectImpl    = rootSelect
+exports.unsafeRemoveImpl  = unsafeRemove
 exports.rootSelectAllImpl = rootSelectAll
-exports.selectAllImpl = selectAll
-exports.bindDataImpl = bindData
-exports.enterImpl = enter
-exports.exitImpl = exit
-exports.transitionImpl = transition
-exports.unsafeAppendImpl = unsafeAppend
-exports.unsafeAttrImpl = unsafeAttr
-exports.unsafeAttrImplP = unsafeAttrP
-exports.unsafeAttrImplPP = unsafeAttrPP
-exports.unsafeStyleImpl = unsafeStyle
-exports.unsafeStyleImplP = unsafeStyleP
+exports.selectAllImpl     = selectAll
+exports.bindDataImpl      = bindData
+exports.enterImpl         = enter
+exports.exitImpl          = exit
+exports.transitionImpl    = transition
+exports.unsafeAppendImpl  = unsafeAppend
+exports.unsafeAttrImpl    = unsafeAttr
+exports.unsafeAttrImplP   = unsafeAttrP
+exports.unsafeAttrImplPP  = unsafeAttrPP
+exports.unsafeStyleImpl   = unsafeStyle
+exports.unsafeStyleImplP  = unsafeStyleP
 exports.unsafeStyleImplPP = unsafeStylePP
-exports.unsafeTextImpl = unsafeText
-exports.unsafeTextImplP = unsafeTextP
-exports.unsafeTextImplPP = unsafeTextPP
-exports.delayImpl = delay
-exports.delayImplP = delayP
-exports.delayImplPP = delayPP
-exports.durationImpl = duration
-exports.durationImplP = durationP
-exports.durationImplPP = durationPP
+exports.unsafeTextImpl    = unsafeText
+exports.unsafeTextImplP   = unsafeTextP
+exports.unsafeTextImplPP  = unsafeTextPP
+exports.delayImpl         = delay
+exports.delayImplP        = delayP
+exports.delayImplPP       = delayPP
+exports.durationImpl      = duration
+exports.durationImplP     = durationP
+exports.durationImplPP    = durationPP
 
 // event handlers
-exports.onClickImpl = attachCallbackS
-exports.onDoubleClickImpl = attachCallbackD
-exports.unsafeOnClickImpl = unsafeAttachCallbackS
+exports.onClickImpl             = attachCallbackS
+exports.onDoubleClickImpl       = attachCallbackD
+exports.unsafeOnClickImpl       = unsafeAttachCallbackS
 exports.unsafeOnDoubleClickImpl = unsafeAttachCallbackD
 
 
@@ -46,9 +46,16 @@ function logMessage(level, message, callback) {
   }
 }
 // end
-
+function unsafeRemove(selection) {
+  d3.selection.prototype.remove(selection);
+}
+function rootSelect(selector) {
+  var selection = d3.select(selector);
+  return selection;
+}
 function rootSelectAll(selector) {
-  return d3.selectAll(selector);
+  d3.selectAll(selector);
+  return selector;
 }
 function selectAll(selector, selection) {
   return selection.selectAll(selector);
@@ -66,10 +73,12 @@ function transition(selection) {
   return selection.transition();
 }
 function unsafeAppend(tag, selection) {
-  return selection.append(tag);
+  var selection = selection.append(tag);
+  return selection;
 }
 function unsafeAttr(key, val, selection) {  // val is simple value
-  return selection.attr(key, val);
+  var s = selection.attr(key, val);
+  return s;
 }
 function unsafeAttrP(key, val, selection) {  // val is (d -> v)
   return selection.attr(key, val);
@@ -114,7 +123,7 @@ function durationPP(duration, transition) {
   return transition.duration(function (d, i) { return duration(d)(i); });
 }
 
-// functions that attach event handlers 
+// functions that attach event handlers
 function attachCallbackS(element, callback) {
   element.on("click", callback);
   console.log("trying out the callback");
