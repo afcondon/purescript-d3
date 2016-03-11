@@ -43,14 +43,11 @@ import Control.Monad.Eff
 import Control.Monad.Eff.Console
 
 import Data.Foreign
-import Data.Foreign.EasyFFI
 
 import Data.Nullable
 import Data.Function.Eff
 
 import Prelude ( Unit() )
-
-ffi = unsafeForeignFunction
 
 -- The "selection-y" types, parameterized by the type of their bound data
 foreign import data Selection :: * -> *
@@ -71,68 +68,68 @@ instance attrValNumber :: AttrValue Number
 instance attrValString :: AttrValue String
 
 foreign import rootSelectImpl :: forall eff.
-  EffFn1 (d3 :: D3 | eff) String (Selection Void)
+  EffFn1 (d3::D3|eff) String (Selection Void)
 foreign import unsafeRemoveImpl :: forall s eff.
-  EffFn1 (d3 :: D3 | eff) s Unit
+  EffFn1 (d3::D3|eff) s Unit
 foreign import rootSelectAllImpl :: forall eff.
-  EffFn1 (d3 :: D3 | eff) String (Selection Void)
+  EffFn1 (d3::D3|eff) String (Selection Void)
 foreign import selectImpl :: forall d eff.
-  EffFn2 (d3 :: D3 | eff) String (Selection d) (Selection d)
+  EffFn2 (d3::D3|eff) String (Selection d) (Selection d)
 foreign import selectAllImpl :: forall d eff.
-  EffFn2 (d3 :: D3 | eff) String (Selection d) (Selection Void)
+  EffFn2 (d3::D3|eff) String (Selection d) (Selection Void)
 foreign import bindDataImpl :: forall oldData newData eff.
-  EffFn2 (d3 :: D3 | eff) (Array newData) (Selection oldData) (Update newData)
+  EffFn2 (d3::D3|eff) (Array newData) (Selection oldData) (Update newData)
 foreign import enterImpl :: forall d eff.
-  EffFn1 (d3 :: D3 | eff) (Update d) (Enter d)
+  EffFn1 (d3::D3|eff) (Update d) (Enter d)
 foreign import exitImpl :: forall eff d.
-  EffFn1 (d3 :: D3 | eff) (Update d) (Exit d)
+  EffFn1 (d3::D3|eff) (Update d) (Exit d)
 foreign import transitionImpl :: forall eff s d. (Existing s) =>
-  EffFn1 (d3 :: D3 | eff) (s d) (Transition d)
+  EffFn1 (d3::D3|eff) (s d) (Transition d)
 foreign import unsafeAppendImpl :: forall eff x y.
-  EffFn2 (d3 :: D3 | eff) String x y
+  EffFn2 (d3::D3|eff) String x y
 foreign import unsafeAttrImpl :: forall eff d v s. (AttrValue v) =>
-  EffFn3 (d3 :: D3 | eff) String v s s
+  EffFn3 (d3::D3|eff) String v s s
 foreign import unsafeAttrImplP :: forall eff d v s. (AttrValue v) =>
-  EffFn3 (d3 :: D3 | eff) String (d -> v) s  s
+  EffFn3 (d3::D3|eff) String (d -> v) s  s
 foreign import unsafeAttrImplPP :: forall eff d v s. (AttrValue v) =>
-  EffFn3 (d3 :: D3 | eff) String (d -> Number -> v) s  s
+  EffFn3 (d3::D3|eff) String (d -> Number -> v) s  s
 foreign import unsafeStyleImpl :: forall eff d s.
-  EffFn3 (d3 :: D3 | eff) String String s  s
+  EffFn3 (d3::D3|eff) String String s  s
 foreign import unsafeStyleImplP :: forall eff d s.
-  EffFn3 (d3 :: D3 | eff) String (d -> String) s  s
+  EffFn3 (d3::D3|eff) String (d -> String) s  s
 foreign import unsafeStyleImplPP :: forall eff d s.
-  EffFn3 (d3 :: D3 | eff) String (d -> Number -> String) s  s
+  EffFn3 (d3::D3|eff) String (d -> Number -> String) s  s
 foreign import unsafeTextImpl :: forall eff d s.
-  EffFn2 (d3 :: D3 | eff) String s  s
+  EffFn2 (d3::D3|eff) String s  s
 foreign import unsafeTextImplP :: forall eff d s.
-  EffFn2 (d3 :: D3 | eff) (d -> String) s  s
+  EffFn2 (d3::D3|eff) (d -> String) s  s
 foreign import unsafeTextImplPP :: forall eff d s.
-  EffFn2 (d3 :: D3 | eff) (d -> Number -> String) s  s
+  EffFn2 (d3::D3|eff) (d -> Number -> String) s  s
 foreign import delayImpl :: forall eff d.
-  EffFn2 (d3 :: D3 | eff) Number (Transition d)  (Transition d)-- Transition-only stuff
+  EffFn2 (d3::D3|eff) Number (Transition d)  (Transition d)-- Transition-only stuff
 foreign import delayImplP :: forall eff d.
-  EffFn2 (d3 :: D3 | eff) (d -> Number) (Transition d) (Transition d)
+  EffFn2 (d3::D3|eff) (d -> Number) (Transition d) (Transition d)
 foreign import delayImplPP :: forall eff d.
-  EffFn2 (d3 :: D3 | eff) (d -> Number -> Number) (Transition d) (Transition d)
+  EffFn2 (d3::D3|eff) (d -> Number -> Number) (Transition d) (Transition d)
 foreign import durationImpl :: forall eff d.
-  EffFn2 (d3 :: D3 | eff) Number (Transition d) (Transition d)
+  EffFn2 (d3::D3|eff) Number (Transition d) (Transition d)
 foreign import durationImplP :: forall eff d.
-  EffFn2 (d3 :: D3 | eff) (d -> Number) (Transition d) (Transition d)
+  EffFn2 (d3::D3|eff) (d -> Number) (Transition d) (Transition d)
 foreign import durationImplPP :: forall eff d.
-  EffFn2 (d3 :: D3 | eff) (d -> Number -> Number) (Transition d) (Transition d)
+  EffFn2 (d3::D3|eff) (d -> Number -> Number) (Transition d) (Transition d)
 
 -- | ===================================================================================
 
 rootSelect :: forall eff.
-  String -> Eff (d3 :: D3 | eff) (Selection Void)
+  String -> Eff (d3::D3|eff) (Selection Void)
 rootSelect = runEffFn1 rootSelectImpl
 
 unsafeRemove :: forall s eff.
-  s -> Eff (d3 :: D3 | eff) Unit
+  s -> Eff (d3::D3|eff) Unit
 unsafeRemove = runEffFn1 unsafeRemoveImpl
 
 rootSelectAll :: forall eff.
-  String -> D3Eff (Selection Void)
+  String -> Eff (d3::D3|eff) (Selection Void)
 rootSelectAll = runEffFn1 rootSelectAllImpl
 
 select :: forall d eff.
@@ -286,52 +283,50 @@ instance existingTransition :: Existing Transition where
   remove = unsafeRemove
 
 
+-- TODO - why are the parameter orders switched here on the Impl - did i do that? or blindly copy? - afc
+-- foreign function that will attach a callback to our clickable selection
+foreign import onClickImpl :: forall eff a d. -- (Clickable => c)
+ EffFn2 (d3::D3|eff)
+        (Selection a)             -- 1st argument for EffFn2, the selection itself
+        (EffFn1 (d3::D3|eff)  -- 2nd argument for EffFn2, the callback function
+                 d                  -- 1st and only argument for EffFn1, the datum given to the callback
+                 Unit)              -- result of EffFn1, callback result is just Unit
+        (Selection a)             -- result of EffFn2, returns selection so that it can be chained
+
+foreign import onDoubleClickImpl :: forall eff a d. -- (Clickable => c)
+ EffFn2 (d3::D3|eff)
+        (Selection a)             -- 1st argument for EffFn2, the selection itself
+        (EffFn1 (d3::D3|eff)  -- 2nd argument for EffFn2, the callback function
+                 d                  -- 1st and only argument for EffFn1, the datum given to the callback
+                 Unit)              -- result of EffFn1, callback result is just Unit
+        (Selection a)             -- result of EffFn2, returns selection so that it can be chained
+
+class Clickable c where
+  onClick :: forall eff. (Foreign -> Eff (d3::D3|eff) Unit) -> c -> Eff (d3::D3|eff) c
+  onDoubleClick :: forall eff. (Foreign -> Eff (d3::D3|eff) Unit) -> c -> Eff (d3::D3|eff) c
+instance clickableSelectionI :: Clickable (Selection a) where
+  onClick callback clickableSelection       = runEffFn2 onClickImpl       clickableSelection (mkEffFn1 callback)
+  onDoubleClick callback clickableSelection = runEffFn2 onDoubleClickImpl clickableSelection (mkEffFn1 callback)
 
 foreign import unsafeOnClickImpl :: forall eff c i r. (Clickable c) =>
-  EffFn2 (d3 :: D3 | eff)
-         (EffFn1 (d3 :: D3 | eff) -- callback, original sig (i -> Eff eff r)
+  EffFn2 (d3::D3|eff)
+         (EffFn1 (d3::D3|eff) -- callback, original sig (i -> Eff eff r)
                   i
                   r)
          c
          c
 foreign import unsafeOnDoubleClickImpl :: forall eff c i r. (Clickable c) =>
-  EffFn2 (d3 :: D3 | eff)
-         (EffFn1 (d3 :: D3 | eff) -- callback, original sig (i -> Eff eff r)
+  EffFn2 (d3::D3|eff)
+         (EffFn1 (d3::D3|eff) -- callback, original sig (i -> Eff eff r)
                   i
                   r)
          c
          c
 
 unsafeOnClick :: forall eff c i r. (Clickable c) =>
-  (i -> Eff eff r) -> c -> Eff (d3::D3|eff) c
+  (i -> Eff (d3::D3|eff) r) -> c -> Eff (d3::D3|eff) c
 unsafeOnClick callback clickableSelection = runEffFn2 unsafeOnClickImpl (mkEffFn1 callback) clickableSelection
 
-
 unsafeOnDoubleClick :: forall eff c i r. (Clickable c) =>
-  (i -> Eff eff r) -> c -> Eff (d3::D3|eff) c
+  (i -> Eff (d3::D3|eff) r) -> c -> Eff (d3::D3|eff) c
 unsafeOnDoubleClick callback clickableSelection = runEffFn2 unsafeOnDoubleClickImpl (mkEffFn1 callback) clickableSelection
-
-class Clickable c where
-  onClick :: forall eff. (Foreign -> Eff (d3 :: D3 | eff) Unit) -> c -> Eff (d3 :: D3 | eff) c
-  onDoubleClick :: forall eff. (Foreign -> Eff (d3 :: D3 | eff) Unit) -> c -> Eff (d3 :: D3 | eff) c
-instance clickableSelectionI :: Clickable (Selection a) where
-  onClick callback clickableSelection       = runEffFn2 onClickImpl       clickableSelection (mkEffFn1 callback)
-  onDoubleClick callback clickableSelection = runEffFn2 onDoubleClickImpl clickableSelection (mkEffFn1 callback)
-
--- TODO - why are the parameter orders switched here on the Impl - did i do that? or blindly copy? - afc
--- foreign function that will attach a callback to our clickable selection
-foreign import onClickImpl :: forall eff a d. -- (Clickable => c)
- EffFn2 (d3 :: D3 | eff)
-        (Selection a)             -- 1st argument for EffFn2, the selection itself
-        (EffFn1 (d3 :: D3 | eff)  -- 2nd argument for EffFn2, the callback function
-                 d                  -- 1st and only argument for EffFn1, the datum given to the callback
-                 Unit)              -- result of EffFn1, callback result is just Unit
-        (Selection a)             -- result of EffFn2, returns selection so that it can be chained
-
-foreign import onDoubleClickImpl :: forall eff a d. -- (Clickable => c)
- EffFn2 (d3 :: D3 | eff)
-        (Selection a)             -- 1st argument for EffFn2, the selection itself
-        (EffFn1 (d3 :: D3 | eff)  -- 2nd argument for EffFn2, the callback function
-                 d                  -- 1st and only argument for EffFn1, the datum given to the callback
-                 Unit)              -- result of EffFn1, callback result is just Unit
-        (Selection a)             -- result of EffFn2, returns selection so that it can be chained

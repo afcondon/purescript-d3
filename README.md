@@ -545,89 +545,91 @@ AttrValue String
 rootSelect :: forall eff. String -> Eff (d3 :: D3 | eff) (Selection Void)
 ```
 
+===================================================================================
+
 #### `rootSelectAll`
 
 ``` purescript
-rootSelectAll :: String -> D3Eff (Selection Void)
+rootSelectAll :: forall eff. String -> Eff (d3 :: D3 | eff) (Selection Void)
 ```
 
 #### `select`
 
 ``` purescript
-select :: forall d. String -> Selection d -> D3Eff (Selection d)
+select :: forall d eff. String -> Selection d -> Eff (d3 :: D3 | eff) (Selection d)
 ```
 
 #### `selectAll`
 
 ``` purescript
-selectAll :: forall d. String -> Selection d -> D3Eff (Selection Void)
+selectAll :: forall d eff. String -> Selection d -> Eff (d3 :: D3 | eff) (Selection Void)
 ```
 
 #### `bindData`
 
 ``` purescript
-bindData :: forall oldData newData. Array newData -> Selection oldData -> D3Eff (Update newData)
+bindData :: forall oldData newData eff. Array newData -> Selection oldData -> Eff (d3 :: D3 | eff) (Update newData)
 ```
 
 #### `enter`
 
 ``` purescript
-enter :: forall d. Update d -> D3Eff (Enter d)
+enter :: forall d eff. Update d -> Eff (d3 :: D3 | eff) (Enter d)
 ```
 
 #### `exit`
 
 ``` purescript
-exit :: forall d. Update d -> D3Eff (Exit d)
+exit :: forall d eff. Update d -> Eff (d3 :: D3 | eff) (Exit d)
 ```
 
 #### `transition`
 
 ``` purescript
-transition :: forall s d. (Existing s) => s d -> D3Eff (Transition d)
+transition :: forall s d eff. (Existing s) => s d -> Eff (d3 :: D3 | eff) (Transition d)
 ```
 
 #### `delay`
 
 ``` purescript
-delay :: forall d. Number -> Transition d -> D3Eff (Transition d)
+delay :: forall d eff. Number -> Transition d -> Eff (d3 :: D3 | eff) (Transition d)
 ```
 
 #### `delay'`
 
 ``` purescript
-delay' :: forall d. (d -> Number) -> Transition d -> D3Eff (Transition d)
+delay' :: forall d eff. (d -> Number) -> Transition d -> Eff (d3 :: D3 | eff) (Transition d)
 ```
 
 #### `delay''`
 
 ``` purescript
-delay'' :: forall d. (d -> Number -> Number) -> Transition d -> D3Eff (Transition d)
+delay'' :: forall d eff. (d -> Number -> Number) -> Transition d -> Eff (d3 :: D3 | eff) (Transition d)
 ```
 
 #### `duration`
 
 ``` purescript
-duration :: forall d. Number -> Transition d -> D3Eff (Transition d)
+duration :: forall d eff. Number -> Transition d -> Eff (d3 :: D3 | eff) (Transition d)
 ```
 
 #### `duration'`
 
 ``` purescript
-duration' :: forall d. (d -> Number) -> Transition d -> D3Eff (Transition d)
+duration' :: forall d eff. (d -> Number) -> Transition d -> Eff (d3 :: D3 | eff) (Transition d)
 ```
 
 #### `duration''`
 
 ``` purescript
-duration'' :: forall d. (d -> Number -> Number) -> Transition d -> D3Eff (Transition d)
+duration'' :: forall d eff. (d -> Number -> Number) -> Transition d -> Eff (d3 :: D3 | eff) (Transition d)
 ```
 
 #### `Appendable`
 
 ``` purescript
 class Appendable s where
-  append :: forall d. String -> s d -> D3Eff (Selection d)
+  append :: forall d eff. String -> s d -> Eff (d3 :: D3 | eff) (Selection d)
 ```
 
 ##### Instances
@@ -641,16 +643,16 @@ Appendable Enter
 
 ``` purescript
 class Existing s where
-  attr :: forall d v. (AttrValue v) => String -> v -> s d -> D3Eff (s d)
-  attr' :: forall d v. (AttrValue v) => String -> (d -> v) -> s d -> D3Eff (s d)
-  attr'' :: forall d v. (AttrValue v) => String -> (d -> Number -> v) -> s d -> D3Eff (s d)
-  style :: forall d. String -> String -> s d -> D3Eff (s d)
-  style' :: forall d. String -> (d -> String) -> s d -> D3Eff (s d)
-  style'' :: forall d. String -> (d -> Number -> String) -> s d -> D3Eff (s d)
-  text :: forall d. String -> s d -> D3Eff (s d)
-  text' :: forall d. (d -> String) -> s d -> D3Eff (s d)
-  text'' :: forall d. (d -> Number -> String) -> s d -> D3Eff (s d)
-  remove :: forall d. s d -> D3Eff Unit
+  attr :: forall d v eff. (AttrValue v) => String -> v -> s d -> Eff (d3 :: D3 | eff) (s d)
+  attr' :: forall d v eff. (AttrValue v) => String -> (d -> v) -> s d -> Eff (d3 :: D3 | eff) (s d)
+  attr'' :: forall d v eff. (AttrValue v) => String -> (d -> Number -> v) -> s d -> Eff (d3 :: D3 | eff) (s d)
+  style :: forall d eff. String -> String -> s d -> Eff (d3 :: D3 | eff) (s d)
+  style' :: forall d eff. String -> (d -> String) -> s d -> Eff (d3 :: D3 | eff) (s d)
+  style'' :: forall d eff. String -> (d -> Number -> String) -> s d -> Eff (d3 :: D3 | eff) (s d)
+  text :: forall d eff. String -> s d -> Eff (d3 :: D3 | eff) (s d)
+  text' :: forall d eff. (d -> String) -> s d -> Eff (d3 :: D3 | eff) (s d)
+  text'' :: forall d eff. (d -> Number -> String) -> s d -> Eff (d3 :: D3 | eff) (s d)
+  remove :: forall d eff. s d -> Eff (d3 :: D3 | eff) Unit
 ```
 
 ##### Instances
@@ -800,7 +802,7 @@ _left-associative / precedence -1_
 #### `(...)`
 
 ``` purescript
-(...) :: forall t4371 t4375. t4375 -> (t4375 -> t4371) -> t4371
+(...) :: forall t4521 t4525. t4525 -> (t4525 -> t4521) -> t4521
 ```
 
 _left-associative / precedence -1_
