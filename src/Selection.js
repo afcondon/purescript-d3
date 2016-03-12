@@ -50,12 +50,10 @@ function unsafeRemove(selection) {
   d3.selection.prototype.remove(selection);
 }
 function rootSelect(selector) {
-  var selection = d3.select(selector);
-  return selection;
+  return d3.select(selector);
 }
 function rootSelectAll(selector) {
-  d3.selectAll(selector);
-  return selector;
+  return d3.selectAll(selector);
 }
 function selectAll(selector, selection) {
   return selection.selectAll(selector);
@@ -73,12 +71,10 @@ function transition(selection) {
   return selection.transition();
 }
 function unsafeAppend(tag, selection) {
-  var selection = selection.append(tag);
-  return selection;
+  return selection.append(tag);
 }
 function unsafeAttr(key, val, selection) {  // val is simple value
-  var s = selection.attr(key, val);
-  return s;
+  return selection.attr(key, val);
 }
 function unsafeAttrP(key, val, selection) {  // val is (d -> v)
   return selection.attr(key, val);
