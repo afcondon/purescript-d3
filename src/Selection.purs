@@ -21,8 +21,10 @@ module Graphics.D3.Selection
   , remove
   , attrS
   , attrN
-  , attr'
-  , attr''
+  , attrS'
+  , attrN'
+  , attrS''
+  , attrN''
   , style
   , style'
   , style''
@@ -79,15 +81,13 @@ foreign import enterImpl          :: forall d eff.     EffFn1 (d3::D3|eff) (Upda
 foreign import exitImpl           :: forall eff d.     EffFn1 (d3::D3|eff) (Update d)                                    (Exit d)
 foreign import unsafeAppendImpl   :: forall eff x s.   EffFn2 (d3::D3|eff) String x                                      s
 
-foreign import unsafeStyleImpl    :: forall eff d s.   EffFn3 (d3::D3|eff) String String s                               s
+foreign import unsafeStyleImpl    :: forall eff s.     EffFn3 (d3::D3|eff) String String s                               s
 foreign import unsafeStyleImplP   :: forall eff d s.   EffFn3 (d3::D3|eff) String (d -> String) s                        s
 foreign import unsafeStyleImplPP  :: forall eff d s.   EffFn3 (d3::D3|eff) String (d -> Number -> String) s              s
 
-foreign import unsafeTextImpl     :: forall eff d s.   EffFn2 (d3::D3|eff) String s                                      s
+foreign import unsafeTextImpl     :: forall eff s.     EffFn2 (d3::D3|eff) String s                                      s
 foreign import unsafeTextImplP    :: forall eff d s.   EffFn2 (d3::D3|eff) (d -> String) s                               s
 foreign import unsafeTextImplPP   :: forall eff d s.   EffFn2 (d3::D3|eff) (d -> Number -> String) s                     s
-
-foreign import unsafeBananaImpl   :: forall eff d s.   EffFn3 (d3::D3|eff) String String s                               s
 
 foreign import transitionImpl     :: forall eff s d.   (Existing s)  => EffFn1 (d3::D3|eff) (s d)                        (Transition d)
 
@@ -99,10 +99,9 @@ foreign import durationImpl       :: forall eff d.     EffFn2 (d3::D3|eff) Numbe
 foreign import durationImplP      :: forall eff d.     EffFn2 (d3::D3|eff) (d -> Number) (Transition d)                  (Transition d)
 foreign import durationImplPP     :: forall eff d.     EffFn2 (d3::D3|eff) (d -> Number -> Number) (Transition d)        (Transition d)
 
-foreign import unsafeAttrNImpl    :: forall eff s.   EffFn3 (d3::D3|eff) String Number s                                 s
-foreign import unsafeAttrSImpl    :: forall eff s.   EffFn3 (d3::D3|eff) String String s                                 s
-foreign import unsafeAttrImplP    :: forall eff d v s. (AttrValue v) => EffFn3 (d3::D3|eff) String (d -> v) s            s
-foreign import unsafeAttrImplPP   :: forall eff d v s. (AttrValue v) => EffFn3 (d3::D3|eff) String (d -> Number -> v) s  s
+foreign import unsafeAttrImpl     :: forall eff s v.   EffFn3 (d3::D3|eff) String v s                                     s
+foreign import unsafeAttrImplP    :: forall eff d v s. EffFn3 (d3::D3|eff) String (d -> v) s                              s
+foreign import unsafeAttrImplPP   :: forall eff d v s. EffFn3 (d3::D3|eff) String (d -> Number -> v) s                    s
 
 
 -- | ===================================================================================
@@ -130,7 +129,7 @@ exit = runEffFn1 exitImpl
 unsafeAppend  :: forall x y eff.  String -> x -> Eff (d3::D3|eff) y
 unsafeAppend = runEffFn2 unsafeAppendImpl
 
-unsafeStyle   :: forall d s eff.  String -> String -> s -> Eff (d3::D3|eff) s
+unsafeStyle   :: forall s eff.  String -> String -> s -> Eff (d3::D3|eff) s
 unsafeStyle = runEffFn3 unsafeStyleImpl
 
 unsafeStyle'  :: forall d s eff.  String -> (d -> String) -> s -> Eff (d3::D3|eff) s
@@ -139,11 +138,8 @@ unsafeStyle' = runEffFn3 unsafeStyleImplP
 unsafeStyle'' :: forall d s eff.  String -> (d -> Number -> String) -> s -> Eff (d3::D3|eff) s
 unsafeStyle'' = runEffFn3 unsafeStyleImplPP
 
-unsafeText    :: forall d s eff.  String -> s -> Eff (d3::D3|eff) s
+unsafeText    :: forall s eff.  String -> s -> Eff (d3::D3|eff) s
 unsafeText = runEffFn2 unsafeTextImpl
-
-unsafeBanana    :: forall d s eff.  String -> String -> s -> Eff (d3::D3|eff) s
-unsafeBanana = runEffFn3 unsafeBananaImpl
 
 unsafeText'   :: forall d s eff.  (d -> String) -> s -> Eff (d3::D3|eff) s
 unsafeText' = runEffFn2 unsafeTextImplP
@@ -175,14 +171,8 @@ bindData = runEffFn2 bindDataImpl
 transition    :: forall s d eff.    (Existing s)  =>  s d -> Eff (d3::D3|eff) (Transition d)
 transition    = runEffFn1 transitionImpl
 
--- eg attr "width" 960.0 selection
--- which is the same as
--- eg selection .. attr "width" 960.0
-unsafeAttrN    :: forall v s eff.    String -> Number -> s -> Eff (d3::D3|eff) s
-unsafeAttrN    = runEffFn3 unsafeAttrNImpl
-
-unsafeAttrS    :: forall v s eff.    String -> String -> s -> Eff (d3::D3|eff) s
-unsafeAttrS    = runEffFn3 unsafeAttrSImpl
+unsafeAttr    :: forall v s eff.                      String -> v -> s -> Eff (d3::D3|eff) s
+unsafeAttr    = runEffFn3 unsafeAttrImpl
 
 unsafeAttr'   :: forall d v s eff.  (AttrValue v) =>  String -> (d -> v) -> s -> Eff (d3::D3|eff) s
 unsafeAttr'   = runEffFn3 unsafeAttrImplP
@@ -206,23 +196,27 @@ instance appendableEnter      :: Appendable Enter where
 
 -- Selection-y things that contain existing DOM elements
 class Existing s where
-  remove  :: forall d eff.                                                          s d -> Eff (d3::D3|eff) Unit
-  attrN   :: forall d v eff. String -> Number ->                                    s d -> Eff (d3::D3|eff) (s d)
-  attrS   :: forall d v eff. String -> String ->                                    s d -> Eff (d3::D3|eff) (s d)
-  attr'   :: forall d v eff. (AttrValue v) => String -> (d -> v) ->                 s d -> Eff (d3::D3|eff) (s d)
-  attr''  :: forall d v eff. (AttrValue v) => String -> (d -> Number -> v) ->       s d -> Eff (d3::D3|eff) (s d)
-  style   :: forall d eff.                    String -> String ->                   s d -> Eff (d3::D3|eff) (s d)
-  style'  :: forall d eff.                    String -> (d -> String) ->            s d -> Eff (d3::D3|eff) (s d)
-  style'' :: forall d eff.                    String -> (d -> Number  -> String) -> s d -> Eff (d3::D3|eff) (s d)
-  text    :: forall d eff.                              String ->                   s d -> Eff (d3::D3|eff) (s d)
-  text'   :: forall d eff.                              (d -> String) ->            s d -> Eff (d3::D3|eff) (s d)
-  text''  :: forall d eff.                              (d -> Number -> String) ->  s d -> Eff (d3::D3|eff) (s d)
+  attrS   :: forall d v eff. String -> String ->                   s d -> Eff (d3::D3|eff) (s d)
+  attrN   :: forall d v eff. String -> Number ->                   s d -> Eff (d3::D3|eff) (s d)
+  attrS'  :: forall d v eff. String -> (d -> String) ->            s d -> Eff (d3::D3|eff) (s d)
+  attrN'  :: forall d v eff. String -> (d -> Number) ->            s d -> Eff (d3::D3|eff) (s d)
+  attrS'' :: forall d v eff. String -> (d -> Number -> String) ->  s d -> Eff (d3::D3|eff) (s d)
+  attrN'' :: forall d v eff. String -> (d -> Number -> Number) ->  s d -> Eff (d3::D3|eff) (s d)
+  style   :: forall d eff.   String -> String ->                   s d -> Eff (d3::D3|eff) (s d)
+  style'  :: forall d eff.   String -> (d -> String) ->            s d -> Eff (d3::D3|eff) (s d)
+  style'' :: forall d eff.   String -> (d -> Number  -> String) -> s d -> Eff (d3::D3|eff) (s d)
+  text    :: forall d eff.             String ->                   s d -> Eff (d3::D3|eff) (s d)
+  text'   :: forall d eff.             (d -> String) ->            s d -> Eff (d3::D3|eff) (s d)
+  text''  :: forall d eff.             (d -> Number -> String) ->  s d -> Eff (d3::D3|eff) (s d)
+  remove  :: forall d eff.                                         s d -> Eff (d3::D3|eff) Unit
 
 instance existingSelection :: Existing Selection where
-  attrN   = unsafeAttrN
-  attrS   = unsafeAttrS
-  attr'   = unsafeAttr'
-  attr''  = unsafeAttr''
+  attrS   = unsafeAttr
+  attrN   = unsafeAttr
+  attrS'  = unsafeAttr'
+  attrN'  = unsafeAttr'
+  attrS'' = unsafeAttr''
+  attrN'' = unsafeAttr''
   style   = unsafeStyle
   style'  = unsafeStyle'
   style'' = unsafeStyle''
@@ -232,10 +226,12 @@ instance existingSelection :: Existing Selection where
   remove  = unsafeRemove
 
 instance existingUpdate :: Existing Update where
-  attrN   = unsafeAttrN
-  attrS   = unsafeAttrS
-  attr'   = unsafeAttr'
-  attr''  = unsafeAttr''
+  attrS   = unsafeAttr
+  attrN   = unsafeAttr
+  attrS'  = unsafeAttr'
+  attrN'  = unsafeAttr'
+  attrS'' = unsafeAttr''
+  attrN'' = unsafeAttr''
   style   = unsafeStyle
   style'  = unsafeStyle'
   style'' = unsafeStyle''
@@ -245,10 +241,12 @@ instance existingUpdate :: Existing Update where
   remove  = unsafeRemove
 
 instance existingTransition :: Existing Transition where
-  attrN   = unsafeAttrN
-  attrS   = unsafeAttrS
-  attr'   = unsafeAttr'
-  attr''  = unsafeAttr''
+  attrS   = unsafeAttr
+  attrN   = unsafeAttr
+  attrS'  = unsafeAttr'
+  attrN'  = unsafeAttr'
+  attrS'' = unsafeAttr''
+  attrN'' = unsafeAttr''
   style   = unsafeStyle
   style'  = unsafeStyle'
   style'' = unsafeStyle''
