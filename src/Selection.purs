@@ -78,30 +78,30 @@ foreign import rootSelectImpl     :: forall eff.       EffFn1 (d3::D3|eff) Strin
 foreign import rootSelectAllImpl  :: forall eff.       EffFn1 (d3::D3|eff) String                                        (Selection Void)
 foreign import unsafeRemoveImpl   :: forall s eff.     EffFn1 (d3::D3|eff) s                                             Unit
 foreign import enterImpl          :: forall d eff.     EffFn1 (d3::D3|eff) (Update d)                                    (Enter d)
-foreign import exitImpl           :: forall eff d.     EffFn1 (d3::D3|eff) (Update d)                                    (Exit d)
-foreign import unsafeAppendImpl   :: forall eff x s.   EffFn2 (d3::D3|eff) String x                                      s
+foreign import exitImpl           :: forall d eff.     EffFn1 (d3::D3|eff) (Update d)                                    (Exit d)
+foreign import unsafeAppendImpl   :: forall x s eff.   EffFn2 (d3::D3|eff) String x                                      s
 
-foreign import unsafeStyleImpl    :: forall eff s.     EffFn3 (d3::D3|eff) String String s                               s
-foreign import unsafeStyleImplP   :: forall eff d s.   EffFn3 (d3::D3|eff) String (d -> String) s                        s
-foreign import unsafeStyleImplPP  :: forall eff d s.   EffFn3 (d3::D3|eff) String (d -> Number -> String) s              s
+foreign import unsafeStyleImpl    :: forall s eff.     EffFn3 (d3::D3|eff) String String s                               s
+foreign import unsafeStyleImplP   :: forall d s eff.   EffFn3 (d3::D3|eff) String (d -> String) s                        s
+foreign import unsafeStyleImplPP  :: forall d s eff.   EffFn3 (d3::D3|eff) String (d -> Number -> String) s              s
 
-foreign import unsafeTextImpl     :: forall eff s.     EffFn2 (d3::D3|eff) String s                                      s
-foreign import unsafeTextImplP    :: forall eff d s.   EffFn2 (d3::D3|eff) (d -> String) s                               s
-foreign import unsafeTextImplPP   :: forall eff d s.   EffFn2 (d3::D3|eff) (d -> Number -> String) s                     s
+foreign import unsafeTextImpl     :: forall s eff.     EffFn2 (d3::D3|eff) String s                                      s
+foreign import unsafeTextImplP    :: forall d s eff.   EffFn2 (d3::D3|eff) (d -> String) s                               s
+foreign import unsafeTextImplPP   :: forall d s eff.   EffFn2 (d3::D3|eff) (d -> Number -> String) s                     s
 
-foreign import transitionImpl     :: forall eff s d.   (Existing s)  => EffFn1 (d3::D3|eff) (s d)                        (Transition d)
+foreign import transitionImpl     :: forall s d eff.   (Existing s)  => EffFn1 (d3::D3|eff) (s d)                        (Transition d)
 
-foreign import delayImpl          :: forall eff d.     EffFn2 (d3::D3|eff) Number (Transition d)                         (Transition d)
-foreign import delayImplP         :: forall eff d.     EffFn2 (d3::D3|eff) (d -> Number) (Transition d)                  (Transition d)
-foreign import delayImplPP        :: forall eff d.     EffFn2 (d3::D3|eff) (d -> Number -> Number) (Transition d)        (Transition d)
+foreign import delayImpl          :: forall d eff.     EffFn2 (d3::D3|eff) Number (Transition d)                         (Transition d)
+foreign import delayImplP         :: forall d eff.     EffFn2 (d3::D3|eff) (d -> Number) (Transition d)                  (Transition d)
+foreign import delayImplPP        :: forall d eff.     EffFn2 (d3::D3|eff) (d -> Number -> Number) (Transition d)        (Transition d)
 
-foreign import durationImpl       :: forall eff d.     EffFn2 (d3::D3|eff) Number (Transition d)                         (Transition d)
-foreign import durationImplP      :: forall eff d.     EffFn2 (d3::D3|eff) (d -> Number) (Transition d)                  (Transition d)
-foreign import durationImplPP     :: forall eff d.     EffFn2 (d3::D3|eff) (d -> Number -> Number) (Transition d)        (Transition d)
+foreign import durationImpl       :: forall d eff.     EffFn2 (d3::D3|eff) Number (Transition d)                         (Transition d)
+foreign import durationImplP      :: forall d eff.     EffFn2 (d3::D3|eff) (d -> Number) (Transition d)                  (Transition d)
+foreign import durationImplPP     :: forall d eff.     EffFn2 (d3::D3|eff) (d -> Number -> Number) (Transition d)        (Transition d)
 
-foreign import unsafeAttrImpl     :: forall eff s v.   EffFn3 (d3::D3|eff) String v s                                     s
-foreign import unsafeAttrImplP    :: forall eff d v s. EffFn3 (d3::D3|eff) String (d -> v) s                              s
-foreign import unsafeAttrImplPP   :: forall eff d v s. EffFn3 (d3::D3|eff) String (d -> Number -> v) s                    s
+foreign import unsafeAttrImpl     :: forall s v eff.   EffFn3 (d3::D3|eff) String v s                                     s
+foreign import unsafeAttrImplP    :: forall d v s eff. EffFn3 (d3::D3|eff) String (d -> v) s                              s
+foreign import unsafeAttrImplPP   :: forall d v s eff. EffFn3 (d3::D3|eff) String (d -> Number -> v) s                    s
 
 
 -- | ===================================================================================
