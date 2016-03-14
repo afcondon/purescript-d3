@@ -1,16 +1,28 @@
 module Graphics.D3.Layout.Base
-  ( GraphLayout
+  ( class GraphLayout
   , size
   , nodes
   , links
+  , Node()
+  , Link()
+  , GraphData
   ) where
 
+import Control.Monad.Eff
 import Graphics.D3.Base
 
+type GraphData =
+  { nodes :: Array Node
+  , links :: Array Link
+  }
+
+type Node = { x :: Number, y :: Number }
+type Link = { source :: Node, target :: Node }
+
 class GraphLayout l where
-  nodes :: forall a. Array a -> l -> D3Eff l
-  links :: forall a. Array a -> l -> D3Eff l
-  size :: forall d. { width :: Number, height :: Number | d } -> l -> D3Eff l
+  nodes :: forall a eff. Array Node -> l -> Eff (d3::D3|eff) l
+  links :: forall a eff. Array Link -> l -> Eff (d3::D3|eff) l
+  size  :: forall d eff. { width :: Number, height :: Number | d } -> l -> Eff (d3::D3|eff) l
 
 class (GraphLayout l) <= HierarchyLayout l where
   -- TODO: children, sort, value, revalue
