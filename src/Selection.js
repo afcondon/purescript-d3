@@ -32,8 +32,8 @@ exports.durationImplPP    = durationPP
 // event handlers
 exports.onClickImpl             = attachCallbackS
 exports.onDoubleClickImpl       = attachCallbackD
-exports.unsafeOnClickImpl       = unsafeAttachCallbackS
-exports.unsafeOnDoubleClickImpl = unsafeAttachCallbackD
+// exports.unsafeOnClickImpl       = unsafeAttachCallbackS
+// exports.unsafeOnDoubleClickImpl = unsafeAttachCallbackD
 
 
 // only here temporarily as a guide
@@ -136,15 +136,15 @@ function attachCallbackD(element, callback) {
   callback("singleClick");
   return element;
 }
-function unsafeAttachCallbackS(callback, clickable) {
-  clickable.on("click", function(d) { callback(d)(); });
-  console.log("trying out the callback, unsafe version");
-  callback("singleClick");
-  return clickable;
-}
-function unsafeAttachCallbackD(callback, clickable) {
-  clickable.on("dblclick", function(d) { callback(d)(); });
-  console.log("trying out the callback, unsafe version");
-  callback("doubleClick");
-  return clickable;
-}
+// function unsafeAttachCallbackS(callback, clickable) {
+//   clickable.on("click", function(d) { callback(d)(); });
+//   console.log("trying out the callback, unsafe version");
+//   callback("singleClick");
+//   return clickable;
+// }
+// function unsafeAttachCallbackD(callback, clickable) {
+//   clickable.on("dblclick", function(d) { callback(d)(); });
+//   console.log("trying out the callback, unsafe version");
+//   callback("doubleClick");
+//   return clickable;
+// }

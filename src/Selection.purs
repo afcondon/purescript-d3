@@ -280,22 +280,22 @@ class Clickable c where
 instance clickableSelectionI :: Clickable (Selection a) where
   onClick callback clickableSelection       = runEffFn2 onClickImpl       clickableSelection (mkEffFn1 callback)
   onDoubleClick callback clickableSelection = runEffFn2 onDoubleClickImpl clickableSelection (mkEffFn1 callback)
-
-foreign import unsafeOnClickImpl :: forall eff c i r. (Clickable c) =>
-  EffFn2 (d3::D3|eff)
-         (EffFn1 (d3::D3|eff) i r) -- callback, original sig (i -> Eff eff r)
-         c
-         c
-foreign import unsafeOnDoubleClickImpl :: forall eff c i r. (Clickable c) =>
-  EffFn2 (d3::D3|eff)
-         (EffFn1 (d3::D3|eff) i r)-- callback, original sig (i -> Eff eff r)
-         c
-         c
-
-unsafeOnClick :: forall eff c i r. (Clickable c) =>
-  (i -> Eff (d3::D3|eff) r) -> c -> Eff (d3::D3|eff) c
-unsafeOnClick callback clickableSelection = runEffFn2 unsafeOnClickImpl (mkEffFn1 callback) clickableSelection
-
-unsafeOnDoubleClick :: forall eff c i r. (Clickable c) =>
-  (i -> Eff (d3::D3|eff) r) -> c -> Eff (d3::D3|eff) c
-unsafeOnDoubleClick callback clickableSelection = runEffFn2 unsafeOnDoubleClickImpl (mkEffFn1 callback) clickableSelection
+--
+-- foreign import unsafeOnClickImpl :: forall eff c i r. (Clickable c) =>
+--   EffFn2 (d3::D3|eff)
+--          (EffFn1 (d3::D3|eff) i r) -- callback, original sig (i -> Eff eff r)
+--          c
+--          c
+-- foreign import unsafeOnDoubleClickImpl :: forall eff c i r. (Clickable c) =>
+--   EffFn2 (d3::D3|eff)
+--          (EffFn1 (d3::D3|eff) i r)-- callback, original sig (i -> Eff eff r)
+--          c
+--          c
+--
+-- unsafeOnClick :: forall eff c i r. (Clickable c) =>
+--   (i -> Eff (d3::D3|eff) r) -> c -> Eff (d3::D3|eff) c
+-- unsafeOnClick callback clickableSelection = runEffFn2 unsafeOnClickImpl (mkEffFn1 callback) clickableSelection
+--
+-- unsafeOnDoubleClick :: forall eff c i r. (Clickable c) =>
+--   (i -> Eff (d3::D3|eff) r) -> c -> Eff (d3::D3|eff) c
+-- unsafeOnDoubleClick callback clickableSelection = runEffFn2 unsafeOnDoubleClickImpl (mkEffFn1 callback) clickableSelection
