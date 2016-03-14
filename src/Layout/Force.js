@@ -11,11 +11,11 @@ exports.linksImpl           = links
 function size(wh, force) {
   return force.size(wh);
 }
-function nodes(nodes, force) {
-  return force.nodes(nodes);
+function nodes(ns, force) {
+  return force.nodes(ns);
 }
-return nodes(links, force) {
-  return force.links(links);
+function links(ls, force) {
+  return force.links(ls);
 }
 
 exports.onTickImpl      = onTick
@@ -30,14 +30,15 @@ function createDrag(obj, callable) {
   return callable.call(obj);
 }
 function onTick(callback, force) {
-  return force.on('tick',
-                  function(d) { return callback(d)(); })
+  return force.on('tick', function(d) {
+                            return callback(d)();
+                  });
 }
 function onDragStart(callback, force) {
-  return force.on('dragstart', callback })
+  return force.on('dragstart', callback);
 }
 
-exports.forceLayout         = d3.layout.force;
+exports.forceLayout         = d3.layout.force
 exports.linkDistanceImpml   = linkDistance
 exports.linkStrengthImpml   = linkStrength
 exports.frictionImpml       = friction
