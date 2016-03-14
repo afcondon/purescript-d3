@@ -3,24 +3,24 @@
 
 // module Graphics.D3.Scale
 
-exports.exponentImpl        = exponent
-exports.baseImpl            = base
-exports.quantilesImpl       = quantiles
-exports.rangePointsImpl     = rangePoints
-exports.rangeBandsImpl      = rangeBands
-exports.rangeRoundBandsImpl = rangeRoundBands
-exports.rangeBandImpl       = rangeBand
-exports.rangeExtentImpl     = rangeExtent
-exports.unsafeInvert        = invert
-exports.unsafeRangeRound    = rangeRound
-exports.unsafeInterpolate   = interpolate
-exports.unsafeClamp         = clamp
-exports.unsafeNiceImplC     = niceWithCount
-exports.unsafeNiceImpl      = nice
-exports.unsafeGetTicksC     = ticksWithCount
-exports.unsafeGetTicks      = ticksDefault
-exports.unsafeGetTickFormatC = tickFormat
-exports.unsafeGetTickFormat = tickFormatDefault
+exports.exponentImpl          = exponent
+exports.baseImpl              = base
+exports.quantilesImpl         = quantiles
+exports.rangePointsImpl       = rangePoints
+exports.rangeBandsImpl        = rangeBands
+exports.rangeRoundBandsImpl   = rangeRoundBands
+exports.rangeBandImpl         = rangeBand
+exports.rangeExtentImpl       = rangeExtent
+exports.unsafeInvertImpl      = invert
+exports.unsafeRangeRoundImpl  = rangeRound
+exports.unsafeInterpolateImpl = interpolate
+exports.unsafeClampImpl       = clamp
+exports.unsafeNiceImplC       = niceWithCount
+exports.unsafeNiceImpl        = nice
+exports.unsafeGetTicksC       = ticksWithCount
+exports.unsafeGetTicks        = ticksDefault
+exports.unsafeGetTickFormatC  = tickFormat
+exports.unsafeGetTickFormat   = tickFormatDefault
 
 exports.linearScale         = d3.scale.linear;
 exports.powerScale          = d3.scale.pow;

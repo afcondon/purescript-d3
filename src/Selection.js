@@ -3,10 +3,11 @@
 
 // module Graphics.D3.Selection
 
-exports.rootSelectImpl    = rootSelect
-exports.unsafeRemoveImpl  = unsafeRemove
-exports.rootSelectAllImpl = rootSelectAll
+exports.selectImpl        = select
 exports.selectAllImpl     = selectAll
+exports.rootSelectImpl    = rootSelect
+exports.rootSelectAllImpl = rootSelectAll
+exports.unsafeRemoveImpl  = unsafeRemove
 exports.bindDataImpl      = bindData
 exports.enterImpl         = enter
 exports.exitImpl          = exit
@@ -57,6 +58,9 @@ function rootSelectAll(selector) {
 }
 function selectAll(selector, selection) {
   return selection.selectAll(selector);
+}
+function select(selector, selection) {
+  return selection.select(selector);
 }
 function bindData(array, selection) {
   return selection.data(array);

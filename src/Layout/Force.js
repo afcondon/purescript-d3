@@ -38,20 +38,23 @@ function onDragStart(callback, force) {
   return force.on('dragstart', callback);
 }
 
-exports.forceLayout         = d3.layout.force
-exports.linkDistanceImpml   = linkDistance
-exports.linkStrengthImpml   = linkStrength
-exports.frictionImpml       = friction
-exports.chargeImpml         = charge
-exports.chargeDistanceImpml = chargeDistance
-exports.thetaImpml          = theta
-exports.gravityImpml        = gravity
-exports.alphaImpml          = alpha
-exports.startImpml          = start
-exports.resumeImpml         = resume
-exports.stopImpml           = stop
-exports.tickImpml           = tick
+exports.forceLayout        = force
+exports.linkDistanceImpl   = linkDistance
+exports.linkStrengthImpl   = linkStrength
+exports.frictionImpl       = friction
+exports.chargeImpl         = charge
+exports.chargeDistanceImpl = chargeDistance
+exports.thetaImpl          = theta
+exports.gravityImpl        = gravity
+exports.alphaImpl          = alpha
+exports.startImpl          = start
+exports.resumeImpl         = resume
+exports.stopImpl           = stop
+exports.tickImpl           = tick
 
+function force() {
+  return d3.layout.force();
+}
 
 function linkDistance(distance, force) {
   return force.linkDistance(distance);

@@ -3,10 +3,10 @@
 
 // module Graphics.D3.Unsafe
 
-exports.unsafeDomainImpl    = domain
-exports.unsafeRangeImpl     = range
-exports.unsafeCopy          = copy
-exports.unsafeToFunction    = toFunction
+exports.unsafeDomainImpl      = domain
+exports.unsafeRangeImpl       = range
+exports.unsafeCopyImpl        = copy
+exports.unsafeToFunctionImpl  = toFunction
 
 function domain(domain, scale) {
   return scale.domain(domain);
