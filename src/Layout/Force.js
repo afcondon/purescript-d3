@@ -11,7 +11,7 @@ exports.linksImpl           = links
 function size(wh, force) {
   return force.size(wh);
 }
-return nodes(nodes, force) {
+function nodes(nodes, force) {
   return force.nodes(nodes);
 }
 return nodes(links, force) {
