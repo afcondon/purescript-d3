@@ -126,14 +126,14 @@ function durationPP(duration, transition) {
 // functions that attach event handlers
 function attachCallbackS(element, callback) {
   element.on("click", callback);
-  console.log("trying out the callback, typeclass version");
-  callback("singleClick");
+  // console.log("trying out the callback, typeclass version");
+  // callback("singleClick");
   return element;
 }
 function attachCallbackD(element, callback) {
   element.on("dblclick", callback);
-  console.log("trying out the callback, typeclass version");
-  callback("singleClick");
+  // console.log("trying out the callback, typeclass version");
+  // callback("singleClick");
   return element;
 }
 // function unsafeAttachCallbackS(callback, clickable) {

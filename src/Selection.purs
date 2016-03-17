@@ -19,12 +19,12 @@ module Graphics.D3.Selection
   , transition
   , append
   , remove
-  , attrS
-  , attrN
-  , attrS'
+  , attr
+  -- , attrN
+  -- , attrS'
   , attrN'
-  , attrS''
-  , attrN''
+  -- , attrS''
+  -- , attrN''
   , style
   , style'
   , style''
@@ -67,9 +67,12 @@ data Void
 -- The class of types which element attribute values can have (numbers and strings)
 class AttrValue a
 
-instance attrValNumber :: AttrValue Number
-instance attrValString :: AttrValue String
-
+instance attrValNumber    :: AttrValue Number
+instance attrValNumberFn  :: AttrValue (d -> Number)
+instance attrValNumberFn' :: AttrValue (d -> Number -> Number)
+instance attrValString    :: AttrValue String
+instance attrValStringFn  :: AttrValue (d -> String)
+instance attrValStringFn' :: AttrValue (d -> Number -> String)
 
 foreign import bindDataImpl       :: forall o n eff.   EffFn2 (d3::D3|eff) (Array n) (Selection o)                       (Update n)
 foreign import selectImpl         :: forall d eff.     EffFn2 (d3::D3|eff) String (Selection d)                          (Selection d)
@@ -100,8 +103,8 @@ foreign import durationImplP      :: forall d eff.     EffFn2 (d3::D3|eff) (d ->
 foreign import durationImplPP     :: forall d eff.     EffFn2 (d3::D3|eff) (d -> Number -> Number) (Transition d)        (Transition d)
 
 foreign import unsafeAttrImpl     :: forall s v eff.   EffFn3 (d3::D3|eff) String v s                                     s
-foreign import unsafeAttrImplP    :: forall d v s eff. EffFn3 (d3::D3|eff) String (d -> v) s                              s
-foreign import unsafeAttrImplPP   :: forall d v s eff. EffFn3 (d3::D3|eff) String (d -> Number -> v) s                    s
+-- foreign import unsafeAttrImplP    :: forall d v s eff. EffFn3 (d3::D3|eff) String (d -> v) s                              s
+-- foreign import unsafeAttrImplPP   :: forall d v s eff. EffFn3 (d3::D3|eff) String (d -> Number -> v) s                    s
 
 
 -- | ===================================================================================
@@ -171,15 +174,11 @@ bindData = runEffFn2 bindDataImpl
 transition    :: forall s d eff.    (Existing s)  =>  s d -> Eff (d3::D3|eff) (Transition d)
 transition    = runEffFn1 transitionImpl
 
-unsafeAttr    :: forall v s eff.                      String -> v -> s -> Eff (d3::D3|eff) s
+unsafeAttr    :: forall v s eff.    (AttrValue v) =>  String -> v -> s -> Eff (d3::D3|eff) s
 unsafeAttr    = runEffFn3 unsafeAttrImpl
 
-unsafeAttr'   :: forall d v s eff.  (AttrValue v) =>  String -> (d -> v) -> s -> Eff (d3::D3|eff) s
-unsafeAttr'   = runEffFn3 unsafeAttrImplP
-
-unsafeAttr''  :: forall d v s eff.  (AttrValue v) =>  String -> (d -> Number -> v) -> s -> Eff (d3::D3|eff) s
-unsafeAttr''  = runEffFn3 unsafeAttrImplPP
-
+unsafeAttr'   :: forall v s eff.    String -> v -> s -> Eff (d3::D3|eff) s
+unsafeAttr'   = runEffFn3 unsafeAttrImpl
 
 -- Selection-y things which can be appended to / inserted into
 class Appendable s where
@@ -196,12 +195,12 @@ instance appendableEnter      :: Appendable Enter where
 
 -- Selection-y things that contain existing DOM elements
 class Existing s where
-  attrS   :: forall d v eff. String -> String ->                   s d -> Eff (d3::D3|eff) (s d)
-  attrN   :: forall d v eff. String -> Number ->                   s d -> Eff (d3::D3|eff) (s d)
-  attrS'  :: forall d v eff. String -> (d -> String) ->            s d -> Eff (d3::D3|eff) (s d)
+  attr   :: forall d v eff. (AttrValue v) => String -> v ->       s d -> Eff (d3::D3|eff) (s d)
+  -- attrN   :: forall d v eff. String -> Number ->                   s d -> Eff (d3::D3|eff) (s d)
+  -- attrS'  :: forall d v eff. String -> (d -> String) ->            s d -> Eff (d3::D3|eff) (s d)
   attrN'  :: forall d v eff. String -> (d -> Number) ->            s d -> Eff (d3::D3|eff) (s d)
-  attrS'' :: forall d v eff. String -> (d -> Number -> String) ->  s d -> Eff (d3::D3|eff) (s d)
-  attrN'' :: forall d v eff. String -> (d -> Number -> Number) ->  s d -> Eff (d3::D3|eff) (s d)
+  -- attrS'' :: forall d v eff. String -> (d -> Number -> String) ->  s d -> Eff (d3::D3|eff) (s d)
+  -- attrN'' :: forall d v eff. String -> (d -> Number -> Number) ->  s d -> Eff (d3::D3|eff) (s d)
   style   :: forall d eff.   String -> String ->                   s d -> Eff (d3::D3|eff) (s d)
   style'  :: forall d eff.   String -> (d -> String) ->            s d -> Eff (d3::D3|eff) (s d)
   style'' :: forall d eff.   String -> (d -> Number  -> String) -> s d -> Eff (d3::D3|eff) (s d)
@@ -211,12 +210,8 @@ class Existing s where
   remove  :: forall d eff.                                         s d -> Eff (d3::D3|eff) Unit
 
 instance existingSelection :: Existing Selection where
-  attrS   = unsafeAttr
-  attrN   = unsafeAttr
-  attrS'  = unsafeAttr'
-  attrN'  = unsafeAttr'
-  attrS'' = unsafeAttr''
-  attrN'' = unsafeAttr''
+  attr    = unsafeAttr
+  attrN'   = unsafeAttr
   style   = unsafeStyle
   style'  = unsafeStyle'
   style'' = unsafeStyle''
@@ -226,12 +221,8 @@ instance existingSelection :: Existing Selection where
   remove  = unsafeRemove
 
 instance existingUpdate :: Existing Update where
-  attrS   = unsafeAttr
-  attrN   = unsafeAttr
-  attrS'  = unsafeAttr'
-  attrN'  = unsafeAttr'
-  attrS'' = unsafeAttr''
-  attrN'' = unsafeAttr''
+  attr    = unsafeAttr
+  attrN'   = unsafeAttr
   style   = unsafeStyle
   style'  = unsafeStyle'
   style'' = unsafeStyle''
@@ -241,12 +232,8 @@ instance existingUpdate :: Existing Update where
   remove  = unsafeRemove
 
 instance existingTransition :: Existing Transition where
-  attrS   = unsafeAttr
-  attrN   = unsafeAttr
-  attrS'  = unsafeAttr'
-  attrN'  = unsafeAttr'
-  attrS'' = unsafeAttr''
-  attrN'' = unsafeAttr''
+  attr    = unsafeAttr
+  attrN'   = unsafeAttr
   style   = unsafeStyle
   style'  = unsafeStyle'
   style'' = unsafeStyle''
@@ -256,9 +243,7 @@ instance existingTransition :: Existing Transition where
   remove  = unsafeRemove
 
 
--- TODO - why are the parameter orders switched here on the Impl - did i do that? or blindly copy? - afc
--- foreign function that will attach a callback to our clickable selection
-foreign import onClickImpl :: forall eff a d. -- (Clickable => c)
+foreign import onClickImpl :: forall eff a i d. -- (Clickable => c)
  EffFn2 (d3::D3|eff)
         (Selection a)             -- 1st argument for EffFn2, the selection itself
         (EffFn1 (d3::D3|eff)  -- 2nd argument for EffFn2, the callback function
@@ -266,7 +251,7 @@ foreign import onClickImpl :: forall eff a d. -- (Clickable => c)
                  Unit)              -- result of EffFn1, callback result is just Unit
         (Selection a)             -- result of EffFn2, returns selection so that it can be chained
 
-foreign import onDoubleClickImpl :: forall eff a d. -- (Clickable => c)
+foreign import onDoubleClickImpl :: forall eff a i d. -- (Clickable => c)
  EffFn2 (d3::D3|eff)
         (Selection a)             -- 1st argument for EffFn2, the selection itself
         (EffFn1 (d3::D3|eff)  -- 2nd argument for EffFn2, the callback function
@@ -275,27 +260,8 @@ foreign import onDoubleClickImpl :: forall eff a d. -- (Clickable => c)
         (Selection a)             -- result of EffFn2, returns selection so that it can be chained
 
 class Clickable c where
-  onClick :: forall eff. (Foreign -> Eff (d3::D3|eff) Unit) -> c -> Eff (d3::D3|eff) c
+  onClick       :: forall eff. (Foreign -> Eff (d3::D3|eff) Unit) -> c -> Eff (d3::D3|eff) c
   onDoubleClick :: forall eff. (Foreign -> Eff (d3::D3|eff) Unit) -> c -> Eff (d3::D3|eff) c
 instance clickableSelectionI :: Clickable (Selection a) where
-  onClick callback clickableSelection       = runEffFn2 onClickImpl       clickableSelection (mkEffFn1 callback)
+  onClick       callback clickableSelection = runEffFn2 onClickImpl       clickableSelection (mkEffFn1 callback)
   onDoubleClick callback clickableSelection = runEffFn2 onDoubleClickImpl clickableSelection (mkEffFn1 callback)
---
--- foreign import unsafeOnClickImpl :: forall eff c i r. (Clickable c) =>
---   EffFn2 (d3::D3|eff)
---          (EffFn1 (d3::D3|eff) i r) -- callback, original sig (i -> Eff eff r)
---          c
---          c
--- foreign import unsafeOnDoubleClickImpl :: forall eff c i r. (Clickable c) =>
---   EffFn2 (d3::D3|eff)
---          (EffFn1 (d3::D3|eff) i r)-- callback, original sig (i -> Eff eff r)
---          c
---          c
---
--- unsafeOnClick :: forall eff c i r. (Clickable c) =>
---   (i -> Eff (d3::D3|eff) r) -> c -> Eff (d3::D3|eff) c
--- unsafeOnClick callback clickableSelection = runEffFn2 unsafeOnClickImpl (mkEffFn1 callback) clickableSelection
---
--- unsafeOnDoubleClick :: forall eff c i r. (Clickable c) =>
---   (i -> Eff (d3::D3|eff) r) -> c -> Eff (d3::D3|eff) c
--- unsafeOnDoubleClick callback clickableSelection = runEffFn2 unsafeOnDoubleClickImpl (mkEffFn1 callback) clickableSelection
