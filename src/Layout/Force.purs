@@ -79,12 +79,6 @@ drag = runEffFn1 dragImpl
 createDrag      :: forall s eff. ForceLayout -> Selection s -> Eff (d3::D3|eff) (Selection s)
 createDrag = runEffFn2 createDragImpl
 
-onDragStart     :: forall eff e r. (Foreign -> Eff (d3::D3|eff) (e r)) -> ForceLayout -> Eff (d3::D3|eff) ForceLayout
-onDragStart callback force  = runEffFn2 onDragStartImpl (mkEffFn1 callback) force
-
-onTick          :: forall eff e r. (Foreign -> Eff (d3::D3|eff) (e r)) -> ForceLayout -> Eff (d3::D3|eff) ForceLayout
-onTick callback force       = runEffFn2 onTickImpl        (mkEffFn1 callback) force
-
 -- foreign import function signatures
 
 foreign import sizeImpl  :: forall eff. EffFn2 (d3::D3|eff) (Array Number) ForceLayout ForceLayout
@@ -103,18 +97,43 @@ foreign import startImpl           ::  forall eff. EffFn1 (d3::D3|eff) ForceLayo
 foreign import resumeImpl          ::  forall eff. EffFn1 (d3::D3|eff) ForceLayout               ForceLayout
 foreign import stopImpl            ::  forall eff. EffFn1 (d3::D3|eff) ForceLayout               ForceLayout
 foreign import tickImpl            ::  forall eff. EffFn1 (d3::D3|eff) ForceLayout               ForceLayout
+foreign import dragImpl            ::  forall eff.  EffFn1 (d3::D3|eff) ForceLayout ForceLayout
+foreign import createDragImpl      ::  forall eff s. EffFn2 (d3::D3|eff) ForceLayout (Selection s) (Selection s)
 
-foreign import dragImpl       :: forall eff.    EffFn1 (d3::D3|eff) ForceLayout ForceLayout
-foreign import createDragImpl :: forall eff s.  EffFn2 (d3::D3|eff) ForceLayout (Selection s) (Selection s)
+-- | these are the tricky ones, callbacks for Ticks (in force update) and Drags (generally)
+onTick          :: forall eff e r. (Foreign -> Eff (d3::D3|eff) (e r)) -> ForceLayout -> Eff (d3::D3|eff) ForceLayout
+onTick pscallback force       = runEffFn2 onTickImpl        (mkEffFn1 pscallback) force
 
 foreign import onTickImpl :: forall eff e r.
   EffFn2 (d3::D3|eff)
-         (EffFn1 (d3::D3|eff) Foreign (e r)) -- callback
+         (EffFn1 (d3::D3|eff) Foreign (e r)) -- callback wrapped by mkEffFn1
          ForceLayout
          ForceLayout
+{-
+                    exports.mkEffFn1 = function mkEffFn1(fn) {  // fn = pscallback
+                      return function(x) {
+                        return fn(x)();
+                      };
+                    };
+
+                    function onTick(callback, force) {   // callback = (mkEffFn1 )
+                      return force.on('tick', function(d) {
+                                                return callback(d)();
+                                      });
+                    }
+-}
+
+onDragStart     :: forall eff e r. (Foreign -> Eff (d3::D3|eff) (e r)) -> ForceLayout -> Eff (d3::D3|eff) ForceLayout
+onDragStart callback force  = runEffFn2 onDragStartImpl (mkEffFn1 callback) force
 
 foreign import onDragStartImpl :: forall eff e r.
   EffFn2 (d3::D3|eff)
          (EffFn1 (d3::D3|eff) Foreign (e r)) -- callback
          ForceLayout
          ForceLayout
+{-
+                   function onDragStart(callback, force) {
+                     return force.on('dragstart', callback);
+                   }
+
+-}

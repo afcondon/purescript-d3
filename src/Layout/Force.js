@@ -31,11 +31,13 @@ function createDrag(obj, callable) {
 }
 function onTick(callback, force) {
   return force.on('tick', function(d) {
-                            return callback(d)();
+                            return callback(d);
                   });
 }
 function onDragStart(callback, force) {
-  return force.on('dragstart', callback);
+  return force.on('dragstart', function(d) {
+                            return callback(d);
+                  });
 }
 
 exports.forceLayout        = force
