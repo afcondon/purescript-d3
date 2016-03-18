@@ -35,6 +35,22 @@ exports.onDoubleClickImpl       = attachCallbackD
 // exports.unsafeOnClickImpl       = unsafeAttachCallbackS
 // exports.unsafeOnDoubleClickImpl = unsafeAttachCallbackD
 
+// custom / temporary hack of mkEffFn1 to prove that "this" pointer can be passed thru to callback
+exports.mkEffFn1Special = function mkEffFn1Special(fn) {
+  return function(x) {
+    return fn(this)();
+  };
+};
+
+exports.runEffFn2Special = function runEffFn2Special(fn) {
+  return function(a) {
+    return function(b) {
+      return function() {
+        return fn(a, b);
+      };
+    };
+  };
+};
 
 // only here temporarily as a guide
 exports.logMessageImpl = logMessage

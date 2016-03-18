@@ -243,22 +243,35 @@ instance existingTransition :: Existing Transition where
 foreign import onClickImpl :: forall eff a i d. -- (Clickable => c)
  EffFn2 (d3::D3|eff)
         (Selection a)             -- 1st argument for EffFn2, the selection itself
-        (EffFn1 (d3::D3|eff)  -- 2nd argument for EffFn2, the callback function
-                 d                  -- 1st and only argument for EffFn1, the datum given to the callback
+        (EffFn1Special (d3::D3|eff)      -- 2nd argument for EffFn2, the callback function
+                (Selection a)       -- 1st and only argument for EffFn1, d3 element, ie "this", passed thru to callback
                  Unit)              -- result of EffFn1, callback result is just Unit
-        (Selection a)             -- result of EffFn2, returns selection so that it can be chained
+        (Selection a)             -- result of EffFn2, returns selection for "fluid interface" / monadic chain
 
 foreign import onDoubleClickImpl :: forall eff a i d. -- (Clickable => c)
  EffFn2 (d3::D3|eff)
         (Selection a)             -- 1st argument for EffFn2, the selection itself
-        (EffFn1 (d3::D3|eff)  -- 2nd argument for EffFn2, the callback function
+        (EffFn1 (d3::D3|eff)      -- 2nd argument for EffFn2, the callback function
                  d                  -- 1st and only argument for EffFn1, the datum given to the callback
                  Unit)              -- result of EffFn1, callback result is just Unit
-        (Selection a)             -- result of EffFn2, returns selection so that it can be chained
+        (Selection a)             -- result of EffFn2, returns selection for "fluid interface" / monadic chain
+
 
 class Clickable c where
-  onClick       :: forall eff. (Foreign -> Eff (d3::D3|eff) Unit) -> c -> Eff (d3::D3|eff) c
+  onClick       :: forall eff. (c -> Eff (d3::D3|eff) Unit) -> c -> Eff (d3::D3|eff) c
   onDoubleClick :: forall eff. (Foreign -> Eff (d3::D3|eff) Unit) -> c -> Eff (d3::D3|eff) c
 instance clickableSelectionI :: Clickable (Selection a) where
-  onClick       callback clickableSelection = runEffFn2 onClickImpl       clickableSelection (mkEffFn1 callback)
-  onDoubleClick callback clickableSelection = runEffFn2 onDoubleClickImpl clickableSelection (mkEffFn1 callback)
+  onClick       callback clickableSelection = runEffFn2 onClickImpl clickableSelection (mkEffFn1Special callback)
+  onDoubleClick callback clickableSelection = runEffFn2 onDoubleClickImpl  clickableSelection (mkEffFn1 callback)
+
+-- custom hack to get a selection back from D3 (using this) instead of the d
+-- perhaps this can be formalized / librarized / templatized if it works
+
+-- foreign import data EffFn1     :: # ! -> * -> * -> *
+foreign import data EffFn1Special :: # ! -> * -> * -> *
+
+-- foreign import mkEffFn1      :: forall eff a r. (a             -> Eff eff r) -> EffFn1 eff a r
+foreign import mkEffFn1Special  :: forall eff a r. ((Selection a) -> Eff eff r) -> EffFn1Special eff (Selection a) r
+
+-- foreign import runEffFn2     :: forall eff a b r.  EffFn2 eff a b r -> a -> b -> Eff eff r
+foreign import runEffFn2Special :: forall eff a b r. EffFn2 eff a b r -> (Selection a) -> b -> Eff eff r
