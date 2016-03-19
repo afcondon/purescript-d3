@@ -5,6 +5,7 @@ module Graphics.D3.Selection
   , Exit()
   , Transition()
   , Void()
+  , D3Element
   , class AttrValue
   , class Existing
   , class Appendable
@@ -12,6 +13,7 @@ module Graphics.D3.Selection
   , rootSelect
   , rootSelectAll
   , select
+  , select'
   , selectAll
   , bindData
   , enter
@@ -55,6 +57,8 @@ foreign import data Update :: * -> *
 foreign import data Enter :: * -> *
 foreign import data Transition :: * -> *
 
+foreign import data D3Element :: *
+
 -- Exit selections have the same semantics as regular selections
 type Exit d = Selection d
 
@@ -71,35 +75,36 @@ instance attrValString    :: AttrValue String
 -- instance attrValStringFn  :: AttrValue (d -> String)
 -- instance attrValStringFn' :: AttrValue (d -> Number -> String)
 
-foreign import bindDataImpl       :: forall o n eff.   EffFn2 (d3::D3|eff) (Array n) (Selection o)                       (Update n)
-foreign import selectImpl         :: forall d eff.     EffFn2 (d3::D3|eff) String (Selection d)                          (Selection d)
-foreign import selectAllImpl      :: forall d eff.     EffFn2 (d3::D3|eff) String (Selection d)                          (Selection Void)
-foreign import rootSelectImpl     :: forall eff.       EffFn1 (d3::D3|eff) String                                        (Selection Void)
-foreign import rootSelectAllImpl  :: forall eff.       EffFn1 (d3::D3|eff) String                                        (Selection Void)
-foreign import unsafeRemoveImpl   :: forall s eff.     EffFn1 (d3::D3|eff) s                                             Unit
-foreign import enterImpl          :: forall d eff.     EffFn1 (d3::D3|eff) (Update d)                                    (Enter d)
-foreign import exitImpl           :: forall d eff.     EffFn1 (d3::D3|eff) (Update d)                                    (Exit d)
-foreign import unsafeAppendImpl   :: forall x s eff.   EffFn2 (d3::D3|eff) String x                                      s
+foreign import bindDataImpl       :: forall o n eff.   EffFn2 (d3::D3|eff) (Array n) (Selection o)                 (Update n)
+foreign import selectImpl         :: forall d eff.     EffFn2 (d3::D3|eff) String (Selection d)                    (Selection d)
+foreign import selectElementImpl  :: forall d eff.     EffFn1 (d3::D3|eff) D3Element                               (Selection d)
+foreign import selectAllImpl      :: forall d eff.     EffFn2 (d3::D3|eff) String (Selection d)                    (Selection Void)
+foreign import rootSelectImpl     :: forall eff.       EffFn1 (d3::D3|eff) String                                  (Selection Void)
+foreign import rootSelectAllImpl  :: forall eff.       EffFn1 (d3::D3|eff) String                                  (Selection Void)
+foreign import unsafeRemoveImpl   :: forall s eff.     EffFn1 (d3::D3|eff) s                                       Unit
+foreign import enterImpl          :: forall d eff.     EffFn1 (d3::D3|eff) (Update d)                              (Enter d)
+foreign import exitImpl           :: forall d eff.     EffFn1 (d3::D3|eff) (Update d)                              (Exit d)
+foreign import unsafeAppendImpl   :: forall x s eff.   EffFn2 (d3::D3|eff) String x                                 s
 
-foreign import unsafeStyleImpl    :: forall s eff.     EffFn3 (d3::D3|eff) String String s                               s
-foreign import unsafeStyleImplP   :: forall d s eff.   EffFn3 (d3::D3|eff) String (d -> String) s                        s
-foreign import unsafeStyleImplPP  :: forall d s eff.   EffFn3 (d3::D3|eff) String (d -> Number -> String) s              s
+foreign import unsafeStyleImpl    :: forall s eff.     EffFn3 (d3::D3|eff) String String s                          s
+foreign import unsafeStyleImplP   :: forall d s eff.   EffFn3 (d3::D3|eff) String (d -> String) s                   s
+foreign import unsafeStyleImplPP  :: forall d s eff.   EffFn3 (d3::D3|eff) String (d -> Number -> String) s         s
 
-foreign import unsafeTextImpl     :: forall s eff.     EffFn2 (d3::D3|eff) String s                                      s
-foreign import unsafeTextImplP    :: forall d s eff.   EffFn2 (d3::D3|eff) (d -> String) s                               s
-foreign import unsafeTextImplPP   :: forall d s eff.   EffFn2 (d3::D3|eff) (d -> Number -> String) s                     s
+foreign import unsafeTextImpl     :: forall s eff.     EffFn2 (d3::D3|eff) String s                                 s
+foreign import unsafeTextImplP    :: forall d s eff.   EffFn2 (d3::D3|eff) (d -> String) s                          s
+foreign import unsafeTextImplPP   :: forall d s eff.   EffFn2 (d3::D3|eff) (d -> Number -> String) s                s
 
-foreign import transitionImpl     :: forall s d eff.   (Existing s)  => EffFn1 (d3::D3|eff) (s d)                        (Transition d)
+foreign import transitionImpl     :: forall s d eff.   (Existing s)  => EffFn1 (d3::D3|eff) (s d)                  (Transition d)
 
-foreign import delayImpl          :: forall d eff.     EffFn2 (d3::D3|eff) Number (Transition d)                         (Transition d)
-foreign import delayImplP         :: forall d eff.     EffFn2 (d3::D3|eff) (d -> Number) (Transition d)                  (Transition d)
-foreign import delayImplPP        :: forall d eff.     EffFn2 (d3::D3|eff) (d -> Number -> Number) (Transition d)        (Transition d)
+foreign import delayImpl          :: forall d eff.     EffFn2 (d3::D3|eff) Number (Transition d)                   (Transition d)
+foreign import delayImplP         :: forall d eff.     EffFn2 (d3::D3|eff) (d -> Number) (Transition d)            (Transition d)
+foreign import delayImplPP        :: forall d eff.     EffFn2 (d3::D3|eff) (d -> Number -> Number) (Transition d)  (Transition d)
 
-foreign import durationImpl       :: forall d eff.     EffFn2 (d3::D3|eff) Number (Transition d)                         (Transition d)
-foreign import durationImplP      :: forall d eff.     EffFn2 (d3::D3|eff) (d -> Number) (Transition d)                  (Transition d)
-foreign import durationImplPP     :: forall d eff.     EffFn2 (d3::D3|eff) (d -> Number -> Number) (Transition d)        (Transition d)
+foreign import durationImpl       :: forall d eff.     EffFn2 (d3::D3|eff) Number (Transition d)                   (Transition d)
+foreign import durationImplP      :: forall d eff.     EffFn2 (d3::D3|eff) (d -> Number) (Transition d)            (Transition d)
+foreign import durationImplPP     :: forall d eff.     EffFn2 (d3::D3|eff) (d -> Number -> Number) (Transition d)  (Transition d)
 
-foreign import unsafeAttrImpl     :: forall s v eff.   EffFn3 (d3::D3|eff) String v s                                     s
+foreign import unsafeAttrImpl     :: forall s v eff.   EffFn3 (d3::D3|eff) String v s                               s
 
 -- | ===================================================================================
 rootSelect    :: forall eff.      String -> Eff (d3::D3|eff) (Selection Void)
@@ -113,6 +118,9 @@ rootSelectAll = runEffFn1 rootSelectAllImpl
 
 select        :: forall d eff.    String -> Selection d -> Eff (d3::D3|eff) (Selection d)
 select = runEffFn2 selectImpl
+
+select'       :: forall d eff.    D3Element -> Eff (d3::D3|eff) (Selection d)
+select' = runEffFn1 selectElementImpl
 
 selectAll     :: forall d eff.    String -> Selection d -> Eff (d3::D3|eff) (Selection Void)
 selectAll = runEffFn2 selectAllImpl
@@ -240,13 +248,18 @@ instance existingTransition :: Existing Transition where
   remove  = unsafeRemove
 
 
-foreign import onClickImpl :: forall eff a i d. -- (Clickable => c)
+-- So, you're _setting_ a click handler on a _Selection_ but it gets _called_ with a datum from
+-- which you can get the selection in JS by just doing d3.select(this)
+-- However, because of our wrapper EffFn1 around the callback there is no "this"
+-- So instead, i'm using a custom _mkEffFn1Special_ which passes on the "this" INSTEAD of the datum
+-- (perhaps it will pass a Tuple of the two of them in the future)
+foreign import onClickImpl :: forall eff a. -- (Clickable => c)
  EffFn2 (d3::D3|eff)
-        (Selection a)             -- 1st argument for EffFn2, the selection itself
-        (EffFn1Special (d3::D3|eff)      -- 2nd argument for EffFn2, the callback function
-                (Selection a)       -- 1st and only argument for EffFn1, d3 element, ie "this", passed thru to callback
-                 Unit)              -- result of EffFn1, callback result is just Unit
-        (Selection a)             -- result of EffFn2, returns selection for "fluid interface" / monadic chain
+        (Selection a)               -- 1st argument for EffFn2, the selection itself
+        (EffFn1Special (d3::D3|eff) -- 2nd argument for EffFn2, the callback function
+                D3Element             -- 1st and only argument for EffFn1, d3 element, ie "this", passed thru to callback
+                Unit)                 -- result of EffFn1, callback result is just Unit
+        (Selection a)               -- result of EffFn2, returns selection for "fluid interface" / monadic chain
 
 foreign import onDoubleClickImpl :: forall eff a i d. -- (Clickable => c)
  EffFn2 (d3::D3|eff)
@@ -258,8 +271,8 @@ foreign import onDoubleClickImpl :: forall eff a i d. -- (Clickable => c)
 
 
 class Clickable c where
-  onClick       :: forall eff. (c -> Eff (d3::D3|eff) Unit) -> c -> Eff (d3::D3|eff) c
-  onDoubleClick :: forall eff. (Foreign -> Eff (d3::D3|eff) Unit) -> c -> Eff (d3::D3|eff) c
+  onClick       :: forall eff. (D3Element -> Eff (d3::D3|eff) Unit) -> c -> Eff (d3::D3|eff) c
+  onDoubleClick :: forall eff. (Foreign   -> Eff (d3::D3|eff) Unit) -> c -> Eff (d3::D3|eff) c
 instance clickableSelectionI :: Clickable (Selection a) where
   onClick       callback clickableSelection = runEffFn2 onClickImpl clickableSelection (mkEffFn1Special callback)
   onDoubleClick callback clickableSelection = runEffFn2 onDoubleClickImpl  clickableSelection (mkEffFn1 callback)
@@ -271,7 +284,7 @@ instance clickableSelectionI :: Clickable (Selection a) where
 foreign import data EffFn1Special :: # ! -> * -> * -> *
 
 -- foreign import mkEffFn1      :: forall eff a r. (a             -> Eff eff r) -> EffFn1 eff a r
-foreign import mkEffFn1Special  :: forall eff a r. ((Selection a) -> Eff eff r) -> EffFn1Special eff (Selection a) r
+foreign import mkEffFn1Special  :: forall eff a r. (D3Element -> Eff eff r) -> EffFn1Special eff D3Element r
 
 -- foreign import runEffFn2     :: forall eff a b r.  EffFn2 eff a b r -> a -> b -> Eff eff r
-foreign import runEffFn2Special :: forall eff a b r. EffFn2 eff a b r -> (Selection a) -> b -> Eff eff r
+foreign import runEffFn2Special :: forall eff a b r. EffFn2 eff a b r -> D3Element -> b -> Eff eff r

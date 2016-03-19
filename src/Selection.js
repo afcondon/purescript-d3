@@ -4,6 +4,7 @@
 // module Graphics.D3.Selection
 
 exports.selectImpl        = select
+exports.selectElementImpl = selectElement
 exports.selectAllImpl     = selectAll
 exports.rootSelectImpl    = rootSelect
 exports.rootSelectAllImpl = rootSelectAll
@@ -78,6 +79,9 @@ function selectAll(selector, selection) {
 function select(selector, selection) {
   return selection.select(selector);
 }
+function selectElement(element) {
+  return d3.select(element);
+}
 function bindData(array, selection) {
   return selection.data(array);
 }
@@ -140,27 +144,11 @@ function durationPP(duration, transition) {
 }
 
 // functions that attach event handlers
-function attachCallbackS(element, callback) {
-  element.on("click", callback);
-  // console.log("trying out the callback, typeclass version");
-  // callback("singleClick");
-  return element;
+function attachCallbackS(selection, callback) {
+  selection.on("click", callback);
+  return selection;
 }
-function attachCallbackD(element, callback) {
-  element.on("dblclick", callback);
-  // console.log("trying out the callback, typeclass version");
-  // callback("singleClick");
-  return element;
+function attachCallbackD(selection, callback) {
+  selection.on("dblclick", callback);
+  return selection;
 }
-// function unsafeAttachCallbackS(callback, clickable) {
-//   clickable.on("click", function(d) { callback(d)(); });
-//   console.log("trying out the callback, unsafe version");
-//   callback("singleClick");
-//   return clickable;
-// }
-// function unsafeAttachCallbackD(callback, clickable) {
-//   clickable.on("dblclick", function(d) { callback(d)(); });
-//   console.log("trying out the callback, unsafe version");
-//   callback("doubleClick");
-//   return clickable;
-// }
