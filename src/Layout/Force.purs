@@ -25,7 +25,7 @@ import Data.Function.Eff
 import Data.Foreign
 
 import Graphics.D3.Base
-import Graphics.D3.EffFnThis
+import Graphics.D3.EffFnExtra
 import Graphics.D3.Selection
 import Graphics.D3.Util
 import Graphics.D3.Layout.Base
@@ -112,11 +112,11 @@ foreign import onTickImpl :: forall eff e r.
          ForceLayout
          ForceLayout
 
-onDragStart     :: forall eff e r. (D3Element -> Eff (d3::D3|eff) Unit) -> ForceLayout -> Eff (d3::D3|eff) ForceLayout
-onDragStart callback force  = runEffFn2 onDragStartImpl force (mkEffFn1 callback)
+onDragStart     :: forall eff e r. (Eff (d3::D3|eff) Unit) -> ForceLayout -> Eff (d3::D3|eff) ForceLayout
+onDragStart callback force  = runEffFn2 onDragStartImpl force callback
 
 foreign import onDragStartImpl :: forall eff e r.
   EffFn2 (d3::D3|eff)
           ForceLayout
-         (EffFn1 (d3::D3|eff) D3Element Unit) -- callback
+         (Eff (d3::D3|eff) Unit) -- callback
           ForceLayout

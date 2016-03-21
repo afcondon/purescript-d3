@@ -1,4 +1,4 @@
-module Graphics.D3.EffFnThis (ElementAndDatum(), mkEffFnThis1, EffFnThis1, mkEffFnTuple1, EffFnTuple1) where
+module Graphics.D3.EffFnExtra (ElementAndDatum(), mkEffFnThis1, EffFnThis1, mkEffFnTuple1, EffFnTuple1) where
 
 import Graphics.D3.Base
 import Control.Monad.Eff

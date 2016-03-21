@@ -41,7 +41,7 @@ module Graphics.D3.Selection
   ) where
 
 import Graphics.D3.Base
-import Graphics.D3.EffFnThis
+import Graphics.D3.EffFnExtra
 import Control.Monad.Eff
 import Control.Monad.Eff.Console
 

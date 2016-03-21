@@ -1,7 +1,7 @@
 /* global exports */
 "use strict";
 
-// module Graphics.D3.EffFnThis
+// module Graphics.D3.EffFnExtra
 var Data_Tuple = require("../Data.Tuple");
 
 // custom / temporary hack of mkEffFn1 to prove that "this" pointer can be passed thru to callback
