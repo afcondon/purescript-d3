@@ -34,7 +34,7 @@ function onTick(callback, force) {
                             return callback(d);
                   });
 }
-function onDragStart(callback, force) {
+function onDragStart(force, callback) {
   return force.on('dragstart', function(d) {
                             return callback(d);
                   });

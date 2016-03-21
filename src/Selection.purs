@@ -5,7 +5,6 @@ module Graphics.D3.Selection
   , Exit()
   , Transition()
   , Void()
-  , D3Element
   , class AttrValue
   , class Existing
   , class Appendable
@@ -24,6 +23,7 @@ module Graphics.D3.Selection
   , attr
   , attr'
   , attr''
+  , classed
   , style
   , style'
   , style''
@@ -41,6 +41,7 @@ module Graphics.D3.Selection
   ) where
 
 import Graphics.D3.Base
+import Graphics.D3.EffFnThis
 import Control.Monad.Eff
 import Control.Monad.Eff.Console
 
@@ -57,8 +58,6 @@ foreign import data Update :: * -> *
 foreign import data Enter :: * -> *
 foreign import data Transition :: * -> *
 
-foreign import data D3Element :: *
-
 -- Exit selections have the same semantics as regular selections
 type Exit d = Selection d
 
@@ -74,6 +73,7 @@ instance attrValNumber    :: AttrValue Number
 instance attrValString    :: AttrValue String
 -- instance attrValStringFn  :: AttrValue (d -> String)
 -- instance attrValStringFn' :: AttrValue (d -> Number -> String)
+instance attrValBoolean   :: AttrValue Boolean
 
 foreign import bindDataImpl       :: forall o n eff.   EffFn2 (d3::D3|eff) (Array n) (Selection o)                 (Update n)
 foreign import selectImpl         :: forall d eff.     EffFn2 (d3::D3|eff) String (Selection d)                    (Selection d)
@@ -85,6 +85,8 @@ foreign import unsafeRemoveImpl   :: forall s eff.     EffFn1 (d3::D3|eff) s    
 foreign import enterImpl          :: forall d eff.     EffFn1 (d3::D3|eff) (Update d)                              (Enter d)
 foreign import exitImpl           :: forall d eff.     EffFn1 (d3::D3|eff) (Update d)                              (Exit d)
 foreign import unsafeAppendImpl   :: forall x s eff.   EffFn2 (d3::D3|eff) String x                                 s
+
+foreign import unsafeClassedImpl  :: forall s eff.     EffFn3 (d3::D3|eff) String Boolean s                          s
 
 foreign import unsafeStyleImpl    :: forall s eff.     EffFn3 (d3::D3|eff) String String s                          s
 foreign import unsafeStyleImplP   :: forall d s eff.   EffFn3 (d3::D3|eff) String (d -> String) s                   s
@@ -133,6 +135,9 @@ exit = runEffFn1 exitImpl
 
 unsafeAppend  :: forall x y eff.  String -> x -> Eff (d3::D3|eff) y
 unsafeAppend = runEffFn2 unsafeAppendImpl
+
+unsafeClassed :: forall s eff. String -> Boolean -> s -> Eff (d3::D3|eff) s
+unsafeClassed = runEffFn3 unsafeClassedImpl
 
 unsafeStyle   :: forall s eff.  String -> String -> s -> Eff (d3::D3|eff) s
 unsafeStyle = runEffFn3 unsafeStyleImpl
@@ -203,6 +208,7 @@ class Existing s where
   attr    :: forall d v eff. (AttrValue v) => String -> v ->        s d -> Eff (d3::D3|eff) (s d)
   attr'   :: forall d v eff. (AttrValue v) => String -> (d -> v) -> s d -> Eff (d3::D3|eff) (s d)
   attr''  :: forall d v eff. (AttrValue v) => String -> (d -> Number -> Number) ->  s d -> Eff (d3::D3|eff) (s d)
+  classed :: forall d eff.   String -> Boolean ->                   s d -> Eff (d3::D3|eff) (s d)
   style   :: forall d eff.   String -> String ->                    s d -> Eff (d3::D3|eff) (s d)
   style'  :: forall d eff.   String -> (d -> String) ->             s d -> Eff (d3::D3|eff) (s d)
   style'' :: forall d eff.   String -> (d -> Number  -> String) ->  s d -> Eff (d3::D3|eff) (s d)
@@ -215,6 +221,7 @@ instance existingSelection :: Existing Selection where
   attr    = unsafeAttr
   attr'   = unsafeAttr'
   attr''  = unsafeAttr''
+  classed = unsafeClassed
   style   = unsafeStyle
   style'  = unsafeStyle'
   style'' = unsafeStyle''
@@ -227,6 +234,7 @@ instance existingUpdate :: Existing Update where
   attr    = unsafeAttr
   attr'   = unsafeAttr'
   attr''  = unsafeAttr''
+  classed = unsafeClassed
   style   = unsafeStyle
   style'  = unsafeStyle'
   style'' = unsafeStyle''
@@ -239,6 +247,7 @@ instance existingTransition :: Existing Transition where
   attr    = unsafeAttr
   attr'   = unsafeAttr'
   attr''  = unsafeAttr''
+  classed = unsafeClassed
   style   = unsafeStyle
   style'  = unsafeStyle'
   style'' = unsafeStyle''
@@ -248,43 +257,33 @@ instance existingTransition :: Existing Transition where
   remove  = unsafeRemove
 
 
--- So, you're _setting_ a click handler on a _Selection_ but it gets _called_ with a datum from
--- which you can get the selection in JS by just doing d3.select(this)
--- However, because of our wrapper EffFn1 around the callback there is no "this"
--- So instead, i'm using a custom _mkEffFn1Special_ which passes on the "this" INSTEAD of the datum
--- (perhaps it will pass a Tuple of the two of them in the future)
+-- So, you're _setting_ a click handler on a _Selection_ but it gets _called_ with the HTML element that
+-- received the click event
+-- Now, you can get the selection in JS by just doing d3.select(this) but because of our wrapper EffFn1
+-- around the callback there is no "this" in the PureScript callback
+-- So instead, i'm using a custom _mkEffFnThis1_ which passes on the "this" INSTEAD of the datum
+    -- perhaps it will pass a Tuple of the two of them in the future
+    -- perhaps this can be formalized / librarized / templatized if it works
+
+class Clickable c where
+  onClick       :: forall eff. (D3Element -> Eff (d3::D3|eff) Unit) -> c -> Eff (d3::D3|eff) c
+  onDoubleClick :: forall eff. (D3Element -> Eff (d3::D3|eff) Unit) -> c -> Eff (d3::D3|eff) c
+instance clickableSelectionI :: Clickable (Selection a) where
+  onClick       callback clickableSelection = runEffFn2 onClickImpl        clickableSelection (mkEffFnThis1 callback)
+  onDoubleClick callback clickableSelection = runEffFn2 onDoubleClickImpl  clickableSelection (mkEffFnThis1 callback)
+
 foreign import onClickImpl :: forall eff a. -- (Clickable => c)
  EffFn2 (d3::D3|eff)
         (Selection a)               -- 1st argument for EffFn2, the selection itself
-        (EffFn1Special (d3::D3|eff) -- 2nd argument for EffFn2, the callback function
+        (EffFnThis1 (d3::D3|eff) -- 2nd argument for EffFn2, the callback function
                 D3Element             -- 1st and only argument for EffFn1, d3 element, ie "this", passed thru to callback
                 Unit)                 -- result of EffFn1, callback result is just Unit
         (Selection a)               -- result of EffFn2, returns selection for "fluid interface" / monadic chain
 
-foreign import onDoubleClickImpl :: forall eff a i d. -- (Clickable => c)
+foreign import onDoubleClickImpl :: forall eff a. -- (Clickable => c)
  EffFn2 (d3::D3|eff)
-        (Selection a)             -- 1st argument for EffFn2, the selection itself
-        (EffFn1 (d3::D3|eff)      -- 2nd argument for EffFn2, the callback function
-                 d                  -- 1st and only argument for EffFn1, the datum given to the callback
-                 Unit)              -- result of EffFn1, callback result is just Unit
-        (Selection a)             -- result of EffFn2, returns selection for "fluid interface" / monadic chain
-
-
-class Clickable c where
-  onClick       :: forall eff. (D3Element -> Eff (d3::D3|eff) Unit) -> c -> Eff (d3::D3|eff) c
-  onDoubleClick :: forall eff. (Foreign   -> Eff (d3::D3|eff) Unit) -> c -> Eff (d3::D3|eff) c
-instance clickableSelectionI :: Clickable (Selection a) where
-  onClick       callback clickableSelection = runEffFn2 onClickImpl clickableSelection (mkEffFn1Special callback)
-  onDoubleClick callback clickableSelection = runEffFn2 onDoubleClickImpl  clickableSelection (mkEffFn1 callback)
-
--- custom hack to get a selection back from D3 (using this) instead of the d
--- perhaps this can be formalized / librarized / templatized if it works
-
--- foreign import data EffFn1     :: # ! -> * -> * -> *
-foreign import data EffFn1Special :: # ! -> * -> * -> *
-
--- foreign import mkEffFn1      :: forall eff a r. (a             -> Eff eff r) -> EffFn1 eff a r
-foreign import mkEffFn1Special  :: forall eff a r. (D3Element -> Eff eff r) -> EffFn1Special eff D3Element r
-
--- foreign import runEffFn2     :: forall eff a b r.  EffFn2 eff a b r -> a -> b -> Eff eff r
-foreign import runEffFn2Special :: forall eff a b r. EffFn2 eff a b r -> D3Element -> b -> Eff eff r
+        (Selection a)               -- 1st argument for EffFn2, the selection itself
+        (EffFnThis1 (d3::D3|eff) -- 2nd argument for EffFn2, the callback function
+                D3Element             -- 1st and only argument for EffFn1, d3 element, ie "this", passed thru to callback
+                Unit)                 -- result of EffFn1, callback result is just Unit
+        (Selection a)               -- result of EffFn2, returns selection for "fluid interface" / monadic chain

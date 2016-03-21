@@ -19,11 +19,13 @@ module Graphics.D3.Layout.Force
   , createDrag
   ) where
 
+import Prelude (Unit)
 import Control.Monad.Eff
 import Data.Function.Eff
 import Data.Foreign
 
 import Graphics.D3.Base
+import Graphics.D3.EffFnThis
 import Graphics.D3.Selection
 import Graphics.D3.Util
 import Graphics.D3.Layout.Base
@@ -102,38 +104,19 @@ foreign import createDragImpl      ::  forall eff s. EffFn2 (d3::D3|eff) ForceLa
 
 -- | these are the tricky ones, callbacks for Ticks (in force update) and Drags (generally)
 onTick          :: forall eff e r. (Foreign -> Eff (d3::D3|eff) (e r)) -> ForceLayout -> Eff (d3::D3|eff) ForceLayout
-onTick pscallback force       = runEffFn2 onTickImpl        (mkEffFn1 pscallback) force
+onTick callback force = runEffFn2 onTickImpl        (mkEffFn1 callback) force
 
 foreign import onTickImpl :: forall eff e r.
   EffFn2 (d3::D3|eff)
          (EffFn1 (d3::D3|eff) Foreign (e r)) -- callback wrapped by mkEffFn1
          ForceLayout
          ForceLayout
-{-
-                    exports.mkEffFn1 = function mkEffFn1(fn) {  // fn = pscallback
-                      return function(x) {
-                        return fn(x)();
-                      };
-                    };
 
-                    function onTick(callback, force) {   // callback = (mkEffFn1 )
-                      return force.on('tick', function(d) {
-                                                return callback(d)();
-                                      });
-                    }
--}
-
-onDragStart     :: forall eff e r. (Foreign -> Eff (d3::D3|eff) (e r)) -> ForceLayout -> Eff (d3::D3|eff) ForceLayout
-onDragStart callback force  = runEffFn2 onDragStartImpl (mkEffFn1 callback) force
+onDragStart     :: forall eff e r. (D3Element -> Eff (d3::D3|eff) Unit) -> ForceLayout -> Eff (d3::D3|eff) ForceLayout
+onDragStart callback force  = runEffFn2 onDragStartImpl force (mkEffFnThis1 callback)
 
 foreign import onDragStartImpl :: forall eff e r.
   EffFn2 (d3::D3|eff)
-         (EffFn1 (d3::D3|eff) Foreign (e r)) -- callback
-         ForceLayout
-         ForceLayout
-{-
-                   function onDragStart(callback, force) {
-                     return force.on('dragstart', callback);
-                   }
-
--}
+          ForceLayout
+         (EffFnThis1 (d3::D3|eff) D3Element Unit) -- callback
+          ForceLayout

@@ -17,6 +17,7 @@ exports.unsafeAppendImpl  = unsafeAppend
 exports.unsafeAttrImpl    = unsafeAttr
 exports.unsafeAttrImplP   = unsafeAttrP
 exports.unsafeAttrImplPP  = unsafeAttrPP
+exports.unsafeClassedImpl = unsafeClassed
 exports.unsafeStyleImpl   = unsafeStyle
 exports.unsafeStyleImplP  = unsafeStyleP
 exports.unsafeStyleImplPP = unsafeStylePP
@@ -33,25 +34,6 @@ exports.durationImplPP    = durationPP
 // event handlers
 exports.onClickImpl             = attachCallbackS
 exports.onDoubleClickImpl       = attachCallbackD
-// exports.unsafeOnClickImpl       = unsafeAttachCallbackS
-// exports.unsafeOnDoubleClickImpl = unsafeAttachCallbackD
-
-// custom / temporary hack of mkEffFn1 to prove that "this" pointer can be passed thru to callback
-exports.mkEffFn1Special = function mkEffFn1Special(fn) {
-  return function(x) {
-    return fn(this)();
-  };
-};
-
-exports.runEffFn2Special = function runEffFn2Special(fn) {
-  return function(a) {
-    return function(b) {
-      return function() {
-        return fn(a, b);
-      };
-    };
-  };
-};
 
 // only here temporarily as a guide
 exports.logMessageImpl = logMessage
@@ -105,6 +87,9 @@ function unsafeAttrP(key, val, selection) {  // val is (d -> v)
 }
 function unsafeAttrPP(key, val, selection) { // val is (d -> Number -> v)
   return selection.attr(key, function(d,i) { return val(d)(i); })
+}
+function unsafeClassed(classname, val, selection) {
+  return selection.classed(classname, val);
 }
 function unsafeStyle(key, val, selection) {
   return selection.style(key, val);
