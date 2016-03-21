@@ -104,7 +104,7 @@ foreign import createDragImpl      ::  forall eff s. EffFn2 (d3::D3|eff) ForceLa
 
 -- | these are the tricky ones, callbacks for Ticks (in force update) and Drags (generally)
 onTick          :: forall eff e r. (Foreign -> Eff (d3::D3|eff) (e r)) -> ForceLayout -> Eff (d3::D3|eff) ForceLayout
-onTick callback force = runEffFn2 onTickImpl        (mkEffFn1 callback) force
+onTick callback force       = runEffFn2 onTickImpl        (mkEffFn1 callback) force
 
 foreign import onTickImpl :: forall eff e r.
   EffFn2 (d3::D3|eff)
@@ -113,10 +113,10 @@ foreign import onTickImpl :: forall eff e r.
          ForceLayout
 
 onDragStart     :: forall eff e r. (D3Element -> Eff (d3::D3|eff) Unit) -> ForceLayout -> Eff (d3::D3|eff) ForceLayout
-onDragStart callback force  = runEffFn2 onDragStartImpl force (mkEffFnThis1 callback)
+onDragStart callback force  = runEffFn2 onDragStartImpl force (mkEffFn1 callback)
 
 foreign import onDragStartImpl :: forall eff e r.
   EffFn2 (d3::D3|eff)
           ForceLayout
-         (EffFnThis1 (d3::D3|eff) D3Element Unit) -- callback
+         (EffFn1 (d3::D3|eff) D3Element Unit) -- callback
           ForceLayout

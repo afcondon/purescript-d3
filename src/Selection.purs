@@ -261,29 +261,29 @@ instance existingTransition :: Existing Transition where
 -- received the click event
 -- Now, you can get the selection in JS by just doing d3.select(this) but because of our wrapper EffFn1
 -- around the callback there is no "this" in the PureScript callback
--- So instead, i'm using a custom _mkEffFnThis1_ which passes on the "this" INSTEAD of the datum
+-- So instead, i'm using a custom _mkEffFnTuple1_ which passes on the "this" INSTEAD of the datum
     -- perhaps it will pass a Tuple of the two of them in the future
     -- perhaps this can be formalized / librarized / templatized if it works
 
 class Clickable c where
-  onClick       :: forall eff. (D3Element -> Eff (d3::D3|eff) Unit) -> c -> Eff (d3::D3|eff) c
-  onDoubleClick :: forall eff. (D3Element -> Eff (d3::D3|eff) Unit) -> c -> Eff (d3::D3|eff) c
+  onClick       :: forall d eff. (ElementAndDatum d -> Eff (d3::D3|eff) Unit) -> c -> Eff (d3::D3|eff) c
+  onDoubleClick :: forall d eff. (ElementAndDatum d -> Eff (d3::D3|eff) Unit) -> c -> Eff (d3::D3|eff) c
 instance clickableSelectionI :: Clickable (Selection a) where
-  onClick       callback clickableSelection = runEffFn2 onClickImpl        clickableSelection (mkEffFnThis1 callback)
-  onDoubleClick callback clickableSelection = runEffFn2 onDoubleClickImpl  clickableSelection (mkEffFnThis1 callback)
+  onClick       callback clickableSelection = runEffFn2 onClickImpl        clickableSelection (mkEffFnTuple1 callback)
+  onDoubleClick callback clickableSelection = runEffFn2 onDoubleClickImpl  clickableSelection (mkEffFnTuple1 callback)
 
-foreign import onClickImpl :: forall eff a. -- (Clickable => c)
+foreign import onClickImpl :: forall eff a d. -- (Clickable => c)
  EffFn2 (d3::D3|eff)
         (Selection a)               -- 1st argument for EffFn2, the selection itself
-        (EffFnThis1 (d3::D3|eff) -- 2nd argument for EffFn2, the callback function
-                D3Element             -- 1st and only argument for EffFn1, d3 element, ie "this", passed thru to callback
+        (EffFnTuple1 (d3::D3|eff) -- 2nd argument for EffFn2, the callback function
+                (ElementAndDatum d)   -- 1st and only argument for EffFn1, d3 element, ie "this", passed thru to callback
                 Unit)                 -- result of EffFn1, callback result is just Unit
         (Selection a)               -- result of EffFn2, returns selection for "fluid interface" / monadic chain
 
-foreign import onDoubleClickImpl :: forall eff a. -- (Clickable => c)
+foreign import onDoubleClickImpl :: forall eff a d. -- (Clickable => c)
  EffFn2 (d3::D3|eff)
         (Selection a)               -- 1st argument for EffFn2, the selection itself
-        (EffFnThis1 (d3::D3|eff) -- 2nd argument for EffFn2, the callback function
-                D3Element             -- 1st and only argument for EffFn1, d3 element, ie "this", passed thru to callback
+        (EffFnTuple1 (d3::D3|eff) -- 2nd argument for EffFn2, the callback function
+                (ElementAndDatum d)   -- 1st and only argument for EffFn1, d3 element, ie "this", passed thru to callback
                 Unit)                 -- result of EffFn1, callback result is just Unit
         (Selection a)               -- result of EffFn2, returns selection for "fluid interface" / monadic chain
