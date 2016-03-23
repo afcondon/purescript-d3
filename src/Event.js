@@ -10,7 +10,7 @@ exports.currentD3Event = function() {
   var possibleEvent = d3.event;
   if (possibleEvent !== null) {
     if(typeof possibleEvent.sourceEvent !== 'undefined') {
-      console.log("possibleEvent.sourceEvent is" + possibleEvent.sourceEvent);
+      // console.log("possibleEvent.sourceEvent is" + possibleEvent.sourceEvent);
       return new Data_Maybe.Just(possibleEvent.sourceEvent);
     }
   }
