@@ -2,8 +2,8 @@
 "use strict";
 
 // module Graphics.D3.Event
-var Data_Maybe = require("../Data.Maybe");
-var DOM = require("../DOM.Event.Event");
+// var Data_Maybe = require("../Data.Maybe");
+var Data_Maybe = PS["Data.Maybe"];
 
 // for typeclass forceGraphLayout
 exports.currentD3Event = function() {

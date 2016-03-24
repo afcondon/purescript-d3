@@ -2,7 +2,8 @@
 "use strict";
 
 // module Graphics.D3.EffFnExtra
-var Data_Tuple = require("../Data.Tuple");
+// var Data_Tuple = require("../Data.Tuple");
+var Data_Tuple = PS["Data.Tuple"];
 
 // custom / temporary hack of mkEffFn1 to prove that "this" pointer can be passed thru to callback
 exports.mkEffFnThis1 = function mkEffFnThis1(fn) {
