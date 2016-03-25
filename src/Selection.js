@@ -10,6 +10,7 @@ exports.rootSelectImpl    = rootSelect
 exports.rootSelectAllImpl = rootSelectAll
 exports.unsafeRemoveImpl  = unsafeRemove
 exports.bindDataImpl      = bindData
+exports.bindDataImplP     = bindDataWithKeyFn
 exports.enterImpl         = enter
 exports.exitImpl          = exit
 exports.transitionImpl    = transition
@@ -66,6 +67,9 @@ function selectElement(element) {
 }
 function bindData(array, selection) {
   return selection.data(array);
+}
+function bindDataWithKeyFn(array, selection, keyFn) {
+  return selection.data(array, keyFn);
 }
 function enter(update) {
   return update.enter();

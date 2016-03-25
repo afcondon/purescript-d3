@@ -15,6 +15,8 @@ module Graphics.D3.Selection
   , select'
   , selectAll
   , bindData
+  , bindDataNK
+  , bindDataSK
   , enter
   , exit
   , transition
@@ -76,6 +78,8 @@ instance attrValString    :: AttrValue String
 instance attrValBoolean   :: AttrValue Boolean
 
 foreign import bindDataImpl       :: forall o n eff.   EffFn2 (d3::D3|eff) (Array n) (Selection o)                 (Update n)
+foreign import bindDataImplN      :: forall d o n eff. EffFn3 (d3::D3|eff) (Array n) (d -> Number) (Selection o)   (Update n)
+foreign import bindDataImplS      :: forall d o n eff. EffFn3 (d3::D3|eff) (Array n) (d -> String) (Selection o)   (Update n)
 foreign import selectImpl         :: forall d eff.     EffFn2 (d3::D3|eff) String (Selection d)                    (Selection d)
 foreign import selectElementImpl  :: forall d eff.     EffFn1 (d3::D3|eff) D3Element                               (Selection d)
 foreign import selectAllImpl      :: forall d eff.     EffFn2 (d3::D3|eff) String (Selection d)                    (Selection Void)
@@ -177,6 +181,12 @@ duration''    = runEffFn2 durationImplPP
 
 bindData      :: forall od nd eff. Array nd -> Selection od -> Eff (d3::D3|eff) (Update nd)
 bindData      = runEffFn2 bindDataImpl
+
+bindDataNK     :: forall d od nd eff. Array nd -> (d -> Number) -> Selection od -> Eff (d3::D3|eff) (Update nd)
+bindDataNK     = runEffFn3 bindDataImplN
+
+bindDataSK     :: forall d od nd eff. Array nd -> (d -> String) -> Selection od -> Eff (d3::D3|eff) (Update nd)
+bindDataSK     = runEffFn3 bindDataImplS
 
 transition    :: forall s d eff.    (Existing s)  =>  s d -> Eff (d3::D3|eff) (Transition d)
 transition    = runEffFn1 transitionImpl
