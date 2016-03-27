@@ -80,9 +80,9 @@ instance attrValBoolean   :: AttrValue Boolean
 foreign import bindDataImpl       :: forall o n eff.   EffFn2 (d3::D3|eff) (Array n) (Selection o)                 (Update n)
 foreign import bindDataImplN      :: forall d o n eff. EffFn3 (d3::D3|eff) (Array n) (d -> Number) (Selection o)   (Update n)
 foreign import bindDataImplS      :: forall d o n eff. EffFn3 (d3::D3|eff) (Array n) (d -> String) (Selection o)   (Update n)
-foreign import selectImpl         :: forall d eff.     EffFn2 (d3::D3|eff) String (Selection d)                    (Selection d)
+foreign import selectImpl         :: forall s d eff.   (Existing s) => EffFn2 (d3::D3|eff) String (s d)            (Selection d)
 foreign import selectElementImpl  :: forall d eff.     EffFn1 (d3::D3|eff) D3Element                               (Selection d)
-foreign import selectAllImpl      :: forall d eff.     EffFn2 (d3::D3|eff) String (Selection d)                    (Selection Void)
+foreign import selectAllImpl      :: forall d s eff.   (Existing s) => EffFn2 (d3::D3|eff) String (s d)            (Selection Void)
 foreign import rootSelectImpl     :: forall eff.       EffFn1 (d3::D3|eff) String                                  (Selection Void)
 foreign import rootSelectAllImpl  :: forall eff.       EffFn1 (d3::D3|eff) String                                  (Selection Void)
 foreign import unsafeRemoveImpl   :: forall s eff.     EffFn1 (d3::D3|eff) s                                       Unit
@@ -122,13 +122,13 @@ unsafeRemove  = runEffFn1 unsafeRemoveImpl
 rootSelectAll :: forall eff.      String -> Eff (d3::D3|eff) (Selection Void)
 rootSelectAll = runEffFn1 rootSelectAllImpl
 
-select        :: forall d eff.    String -> Selection d -> Eff (d3::D3|eff) (Selection d)
+select        :: forall d s eff.  (Existing s) => String -> (s d) -> Eff (d3::D3|eff) (Selection d)
 select        = runEffFn2 selectImpl
 
 select'       :: forall d eff.    D3Element -> Eff (d3::D3|eff) (Selection d)
 select'       = runEffFn1 selectElementImpl
 
-selectAll     :: forall d eff.    String -> Selection d -> Eff (d3::D3|eff) (Selection Void)
+selectAll     :: forall d s eff.   (Existing s) => String -> (s d) -> Eff (d3::D3|eff) (Selection Void)
 selectAll     = runEffFn2 selectAllImpl
 
 enter         :: forall d eff.    Update d -> Eff (d3::D3|eff) (Enter d)
