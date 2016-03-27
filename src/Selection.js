@@ -4,6 +4,7 @@
 // module Graphics.D3.Selection
 
 exports.selectImpl        = select
+exports.filterImpl        = filter
 exports.selectElementImpl = selectElement
 exports.selectAllImpl     = selectAll
 exports.rootSelectImpl    = rootSelect
@@ -62,6 +63,9 @@ function selectAll(selector, selection) {
 }
 function select(selector, selection) {
   return selection.select(selector);
+}
+function filter(selector, selection) {
+  return selection.filter(selector);
 }
 function selectElement(element) {
   return d3.select(element);

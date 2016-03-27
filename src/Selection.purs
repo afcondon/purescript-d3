@@ -11,6 +11,7 @@ module Graphics.D3.Selection
   , class Clickable
   , rootSelect
   , rootSelectAll
+  , filter
   , select
   , select'
   , selectAll
@@ -81,8 +82,9 @@ foreign import bindDataImpl       :: forall o n eff.   EffFn2 (d3::D3|eff) (Arra
 foreign import bindDataImplN      :: forall d o n eff. EffFn3 (d3::D3|eff) (Array n) (d -> Number) (Selection o)   (Update n)
 foreign import bindDataImplS      :: forall d o n eff. EffFn3 (d3::D3|eff) (Array n) (d -> String) (Selection o)   (Update n)
 foreign import selectImpl         :: forall s d eff.   (Existing s) => EffFn2 (d3::D3|eff) String (s d)            (Selection d)
-foreign import selectElementImpl  :: forall d eff.     EffFn1 (d3::D3|eff) D3Element                               (Selection d)
 foreign import selectAllImpl      :: forall d s eff.   (Existing s) => EffFn2 (d3::D3|eff) String (s d)            (Selection Void)
+foreign import filterImpl         :: forall s d eff.   (Existing s) => EffFn2 (d3::D3|eff) String (s d)            (Selection d)
+foreign import selectElementImpl  :: forall d eff.     EffFn1 (d3::D3|eff) D3Element                               (Selection d)
 foreign import rootSelectImpl     :: forall eff.       EffFn1 (d3::D3|eff) String                                  (Selection Void)
 foreign import rootSelectAllImpl  :: forall eff.       EffFn1 (d3::D3|eff) String                                  (Selection Void)
 foreign import unsafeRemoveImpl   :: forall s eff.     EffFn1 (d3::D3|eff) s                                       Unit
@@ -124,6 +126,9 @@ rootSelectAll = runEffFn1 rootSelectAllImpl
 
 select        :: forall d s eff.  (Existing s) => String -> (s d) -> Eff (d3::D3|eff) (Selection d)
 select        = runEffFn2 selectImpl
+
+filter        :: forall d s eff.  (Existing s) => String -> (s d) -> Eff (d3::D3|eff) (Selection d)
+filter        = runEffFn2 filterImpl
 
 select'       :: forall d eff.    D3Element -> Eff (d3::D3|eff) (Selection d)
 select'       = runEffFn1 selectElementImpl
