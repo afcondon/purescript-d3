@@ -103,8 +103,8 @@ foreign import unsafeTextImpl     :: forall s eff.     EffFn2 (d3::D3|eff) Strin
 foreign import unsafeTextImplP    :: forall d s eff.   EffFn2 (d3::D3|eff) (d -> String) s                          s
 foreign import unsafeTextImplPP   :: forall d s eff.   EffFn2 (d3::D3|eff) (d -> Number -> String) s                s
 foreign import unsafeAttrImpl     :: forall s v eff.   EffFn3 (d3::D3|eff) String v s                               s
+foreign import transitionImpl     :: forall s d eff.   EffFn1 (d3::D3|eff) s                                       (Transition d)
 
-foreign import transitionImpl     :: forall s d eff.   (Existing s)  => EffFn1 (d3::D3|eff) (s d)                  (Transition d)
 foreign import delayImpl          :: forall d eff.     EffFn2 (d3::D3|eff) Number (Transition d)                   (Transition d)
 foreign import delayImplP         :: forall d eff.     EffFn2 (d3::D3|eff) (d -> Number) (Transition d)            (Transition d)
 foreign import delayImplPP        :: forall d eff.     EffFn2 (d3::D3|eff) (d -> Number -> Number) (Transition d)  (Transition d)
@@ -195,8 +195,8 @@ bindDataNK     = runEffFn3 bindDataImplN
 bindDataSK     :: forall d od nd eff. Array nd -> (d -> String) -> Selection od -> Eff (d3::D3|eff) (Update nd)
 bindDataSK     = runEffFn3 bindDataImplS
 
-transition    :: forall s d eff.    (Existing s)  =>  s d -> Eff (d3::D3|eff) (Transition d)
-transition    = runEffFn1 transitionImpl
+unsafeTransition    :: forall s d eff.    s -> Eff (d3::D3|eff) (Transition d)
+unsafeTransition    = runEffFn1 transitionImpl
 
 unsafeAttr    :: forall v s eff.    (AttrValue v) =>  String -> v -> s -> Eff (d3::D3|eff) s
 unsafeAttr    = runEffFn3 unsafeAttrImpl
@@ -237,6 +237,7 @@ class Existing s where
   select    :: forall d eff.  String ->                               s d -> Eff (d3::D3|eff) (s d)
   filter    :: forall d eff.  String ->                               s d -> Eff (d3::D3|eff) (s d)
   order     :: forall d eff.                                          s d -> Eff (d3::D3|eff) (s d)
+  transition :: forall d eff.                                         s d -> Eff (d3::D3|eff) (Transition d)
 
 instance existingSelection :: Existing Selection where
   attr      = unsafeAttr
@@ -254,7 +255,8 @@ instance existingSelection :: Existing Selection where
   select    = unsafeSelect
   filter    = unsafeFilter
   order     = unsafeOrder
-
+  transition = unsafeTransition
+  
 instance existingUpdate :: Existing Update where
   attr      = unsafeAttr
   attr'     = unsafeAttr'
@@ -271,7 +273,8 @@ instance existingUpdate :: Existing Update where
   select    = unsafeSelect
   filter    = unsafeFilter
   order     = unsafeOrder
-
+  transition = unsafeTransition
+  
 instance existingTransition :: Existing Transition where
   attr      = unsafeAttr
   attr'     = unsafeAttr'
@@ -288,7 +291,8 @@ instance existingTransition :: Existing Transition where
   select    = unsafeSelect
   filter    = unsafeFilter
   order     = unsafeOrder
-
+  transition = unsafeTransition
+  
 
 -- So, you're _setting_ a click handler on a _Selection_ but it gets _called_ with the HTML element that
 -- received the click event
