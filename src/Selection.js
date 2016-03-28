@@ -13,6 +13,7 @@ exports.unsafeRemoveImpl  = unsafeRemove
 exports.bindDataImpl      = bindData
 exports.bindDataImplN     = bindDataWithKeyFn
 exports.bindDataImplS     = bindDataWithKeyFn
+exports.orderImpl         = order
 exports.enterImpl         = enter
 exports.exitImpl          = exit
 exports.transitionImpl    = transition
@@ -75,6 +76,9 @@ function bindData(array, selection) {
 }
 function bindDataWithKeyFn(array, keyFn, selection) {
   return selection.data(array, keyFn);
+}
+function order(selection) {
+  return selection.order();
 }
 function enter(update) {
   return update.enter();
