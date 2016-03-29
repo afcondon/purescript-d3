@@ -17,6 +17,7 @@ exports.orderImpl         = order
 exports.enterImpl         = enter
 exports.exitImpl          = exit
 exports.transitionImpl    = transition
+exports.transitionImplP   = transitionP
 exports.unsafeAppendImpl  = unsafeAppend
 exports.unsafeAttrImpl    = unsafeAttr
 exports.unsafeAttrImplP   = unsafeAttrP
@@ -88,6 +89,9 @@ function exit(update) {
 }
 function transition(selection) {
   return selection.transition();
+}
+function transitionP(name, selection) {
+  return selection.transition(name);
 }
 function unsafeAppend(tag, selection) {
   return selection.append(tag);

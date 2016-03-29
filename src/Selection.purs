@@ -22,6 +22,7 @@ module Graphics.D3.Selection
   , enter
   , exit
   , transition
+  , transition'
   , append
   , remove
   , attr
@@ -103,6 +104,7 @@ foreign import unsafeTextImpl     :: forall s eff.     EffFn2 (d3::D3|eff) Strin
 foreign import unsafeTextImplP    :: forall d s eff.   EffFn2 (d3::D3|eff) (d -> String) s                          s
 foreign import unsafeTextImplPP   :: forall d s eff.   EffFn2 (d3::D3|eff) (d -> Number -> String) s                s
 foreign import unsafeAttrImpl     :: forall s v eff.   EffFn3 (d3::D3|eff) String v s                               s
+foreign import transitionImplP    :: forall s d eff.   EffFn2 (d3::D3|eff) String s                                (Transition d)
 foreign import transitionImpl     :: forall s d eff.   EffFn1 (d3::D3|eff) s                                       (Transition d)
 
 foreign import delayImpl          :: forall d eff.     EffFn2 (d3::D3|eff) Number (Transition d)                   (Transition d)
@@ -198,6 +200,9 @@ bindDataSK     = runEffFn3 bindDataImplS
 unsafeTransition    :: forall s d eff.    s -> Eff (d3::D3|eff) (Transition d)
 unsafeTransition    = runEffFn1 transitionImpl
 
+unsafeTransitionN    :: forall s d eff.    String -> s -> Eff (d3::D3|eff) (Transition d)
+unsafeTransitionN    = runEffFn2 transitionImplP
+
 unsafeAttr    :: forall v s eff.    (AttrValue v) =>  String -> v -> s -> Eff (d3::D3|eff) s
 unsafeAttr    = runEffFn3 unsafeAttrImpl
 
@@ -237,6 +242,7 @@ class Existing s where
   select    :: forall d eff.  String ->                               s d -> Eff (d3::D3|eff) (s d)
   filter    :: forall d eff.  String ->                               s d -> Eff (d3::D3|eff) (s d)
   order     :: forall d eff.                                          s d -> Eff (d3::D3|eff) (s d)
+  transition' :: forall d eff. String ->                              s d -> Eff (d3::D3|eff) (Transition d)
   transition :: forall d eff.                                         s d -> Eff (d3::D3|eff) (Transition d)
 
 instance existingSelection :: Existing Selection where
@@ -256,7 +262,8 @@ instance existingSelection :: Existing Selection where
   filter    = unsafeFilter
   order     = unsafeOrder
   transition = unsafeTransition
-  
+  transition' = unsafeTransitionN
+
 instance existingUpdate :: Existing Update where
   attr      = unsafeAttr
   attr'     = unsafeAttr'
@@ -274,7 +281,8 @@ instance existingUpdate :: Existing Update where
   filter    = unsafeFilter
   order     = unsafeOrder
   transition = unsafeTransition
-  
+  transition' = unsafeTransitionN
+
 instance existingTransition :: Existing Transition where
   attr      = unsafeAttr
   attr'     = unsafeAttr'
@@ -292,7 +300,8 @@ instance existingTransition :: Existing Transition where
   filter    = unsafeFilter
   order     = unsafeOrder
   transition = unsafeTransition
-  
+  transition' = unsafeTransitionN
+
 
 -- So, you're _setting_ a click handler on a _Selection_ but it gets _called_ with the HTML element that
 -- received the click event
