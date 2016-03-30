@@ -12,6 +12,7 @@ module Graphics.D3.Selection
   , rootSelect
   , rootSelectAll
   , filter
+  , filter'
   , select
   , select'
   , selectAll
@@ -91,8 +92,9 @@ foreign import enterImpl          :: forall d eff.     EffFn1 (d3::D3|eff) (Upda
 foreign import exitImpl           :: forall d eff.     EffFn1 (d3::D3|eff) (Update d)                              (Exit d)
 
 -- following functions are for typeclass (Existing)
-foreign import selectImpl         :: forall s eff.     EffFn2 (d3::D3|eff) String s                                 s
+foreign import filterPImpl        :: forall s d eff.   EffFn2 (d3::D3|eff) (d -> Boolean) s                         s
 foreign import filterImpl         :: forall s eff.     EffFn2 (d3::D3|eff) String s                                 s
+foreign import selectImpl         :: forall s eff.     EffFn2 (d3::D3|eff) String s                                 s
 foreign import orderImpl          :: forall s eff.     EffFn1 (d3::D3|eff) s                                        s
 foreign import unsafeAppendImpl   :: forall x s eff.   EffFn2 (d3::D3|eff) String x                                 s
 foreign import unsafeClassedImpl  :: forall s eff.     EffFn3 (d3::D3|eff) String Boolean s                         s
@@ -139,6 +141,9 @@ unsafeSelect  = runEffFn2 selectImpl
 
 unsafeFilter  :: forall s eff.  String -> s -> Eff (d3::D3|eff) s
 unsafeFilter  = runEffFn2 filterImpl
+
+unsafeFilter'  :: forall s d eff.  (d -> Boolean) -> s -> Eff (d3::D3|eff) s
+unsafeFilter'  = runEffFn2 filterPImpl
 
 unsafeOrder   :: forall s eff.   s -> Eff (d3::D3|eff) s
 unsafeOrder    = runEffFn1 orderImpl
@@ -241,6 +246,7 @@ class Existing s where
   remove    :: forall d eff.                                          s d -> Eff (d3::D3|eff) Unit
   select    :: forall d eff.  String ->                               s d -> Eff (d3::D3|eff) (s d)
   filter    :: forall d eff.  String ->                               s d -> Eff (d3::D3|eff) (s d)
+  filter'   :: forall d eff.  (d -> Boolean) ->                       s d -> Eff (d3::D3|eff) (s d)
   order     :: forall d eff.                                          s d -> Eff (d3::D3|eff) (s d)
   transition' :: forall d eff. String ->                              s d -> Eff (d3::D3|eff) (Transition d)
   transition :: forall d eff.                                         s d -> Eff (d3::D3|eff) (Transition d)
@@ -260,6 +266,7 @@ instance existingSelection :: Existing Selection where
   remove    = unsafeRemove
   select    = unsafeSelect
   filter    = unsafeFilter
+  filter'   = unsafeFilter'
   order     = unsafeOrder
   transition = unsafeTransition
   transition' = unsafeTransitionN
@@ -279,6 +286,7 @@ instance existingUpdate :: Existing Update where
   remove    = unsafeRemove
   select    = unsafeSelect
   filter    = unsafeFilter
+  filter'   = unsafeFilter'
   order     = unsafeOrder
   transition = unsafeTransition
   transition' = unsafeTransitionN
@@ -298,6 +306,7 @@ instance existingTransition :: Existing Transition where
   remove    = unsafeRemove
   select    = unsafeSelect
   filter    = unsafeFilter
+  filter'   = unsafeFilter'
   order     = unsafeOrder
   transition = unsafeTransition
   transition' = unsafeTransitionN

@@ -5,6 +5,7 @@
 
 exports.selectImpl        = select
 exports.filterImpl        = filter
+exports.filterPImpl       = filter
 exports.selectElementImpl = selectElement
 exports.selectAllImpl     = selectAll
 exports.rootSelectImpl    = rootSelect
