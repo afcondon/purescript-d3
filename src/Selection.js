@@ -4,6 +4,7 @@
 // module Graphics.D3.Selection
 
 exports.selectImpl        = select
+exports.insertImpl        = insert
 exports.filterImpl        = filter
 exports.filterPImpl       = filter
 exports.selectElementImpl = selectElement
@@ -66,6 +67,9 @@ function selectAll(selector, selection) {
 }
 function select(selector, selection) {
   return selection.select(selector);
+}
+function insert(selector, selection) {
+  return selection.insert(selector);
 }
 function filter(selector, selection) {
   return selection.filter(selector);
