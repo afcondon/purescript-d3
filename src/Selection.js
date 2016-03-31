@@ -3,7 +3,7 @@
 
 // module Graphics.D3.Selection
 
-exports.unsafeInsertImpl  = unSafeInsert
+exports.unsafeInsertImpl  = unsafeInsert
 exports.unsafeAppendImpl  = unsafeAppend
 exports.selectImpl        = select
 exports.filterImpl        = filter
