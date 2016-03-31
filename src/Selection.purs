@@ -92,13 +92,14 @@ foreign import unsafeRemoveImpl   :: forall s eff.     EffFn1 (d3::D3|eff) s    
 foreign import enterImpl          :: forall d eff.     EffFn1 (d3::D3|eff) (Update d)                              (Enter d)
 foreign import exitImpl           :: forall d eff.     EffFn1 (d3::D3|eff) (Update d)                              (Exit d)
 
+-- following functions are for typeclass (Appendable)
+foreign import unsafeAppendImpl   :: forall x s eff.   EffFn2 (d3::D3|eff) String x                                 s
+foreign import unsafeInsertImpl   :: forall x s eff.   EffFn2 (d3::D3|eff) String x                                 s
 -- following functions are for typeclass (Existing)
 foreign import filterPImpl        :: forall s d eff.   EffFn2 (d3::D3|eff) (d -> Boolean) s                         s
 foreign import filterImpl         :: forall s eff.     EffFn2 (d3::D3|eff) String s                                 s
-foreign import insertImpl         :: forall s eff.     EffFn2 (d3::D3|eff) String s                                 s
 foreign import selectImpl         :: forall s eff.     EffFn2 (d3::D3|eff) String s                                 s
 foreign import orderImpl          :: forall s eff.     EffFn1 (d3::D3|eff) s                                        s
-foreign import unsafeAppendImpl   :: forall x s eff.   EffFn2 (d3::D3|eff) String x                                 s
 foreign import unsafeClassedImpl  :: forall s eff.     EffFn3 (d3::D3|eff) String Boolean s                         s
 foreign import selectAllImpl      :: forall s eff.     EffFn2 (d3::D3|eff) String s                                 s
 foreign import unsafeStyleImpl    :: forall s v eff.   EffFn3 (d3::D3|eff) String v s                               s
@@ -138,9 +139,6 @@ enter         = runEffFn1 enterImpl
 exit          :: forall d eff.    Update d -> Eff (d3::D3|eff) (Exit d)
 exit          = runEffFn1 exitImpl
 
-unsafeInsert  :: forall s eff.  String -> s -> Eff (d3::D3|eff) s
-unsafeInsert  = runEffFn2 insertImpl
-
 unsafeSelect  :: forall s eff.  String -> s -> Eff (d3::D3|eff) s
 unsafeSelect  = runEffFn2 selectImpl
 
@@ -152,6 +150,9 @@ unsafeFilter'  = runEffFn2 filterPImpl
 
 unsafeOrder   :: forall s eff.   s -> Eff (d3::D3|eff) s
 unsafeOrder    = runEffFn1 orderImpl
+
+unsafeInsert  :: forall x y eff.  String -> x -> Eff (d3::D3|eff) y
+unsafeInsert  = runEffFn2 unsafeInsertImpl
 
 unsafeAppend  :: forall x y eff.  String -> x -> Eff (d3::D3|eff) y
 unsafeAppend  = runEffFn2 unsafeAppendImpl
@@ -225,15 +226,19 @@ unsafeAttr''   = runEffFn3 unsafeAttrImpl
 -- Selection-y things which can be appended to / inserted into
 class Appendable s where
   append :: forall d eff. String -> s d -> Eff (d3::D3|eff) (Selection d)
+  insert :: forall d eff. String -> s d -> Eff (d3::D3|eff) (Selection d)
 
 instance appendableSelection  :: Appendable Selection where
   append = unsafeAppend
+  insert = unsafeInsert
 
 instance appendableUpdate     :: Appendable Update where
   append = unsafeAppend
+  insert = unsafeInsert
 
 instance appendableEnter      :: Appendable Enter where
   append = unsafeAppend
+  insert = unsafeInsert
 
 -- Selection-y things that contain existing DOM elements
 class Existing s where
@@ -250,7 +255,7 @@ class Existing s where
   text''    :: forall d eff.             (d -> Number -> String) ->   s d -> Eff (d3::D3|eff) (s d)
   remove    :: forall d eff.                                          s d -> Eff (d3::D3|eff) Unit
   select    :: forall d eff.  String ->                               s d -> Eff (d3::D3|eff) (s d)
-  insert    :: forall d eff.  String ->                               s d -> Eff (d3::D3|eff) (s d)
+  -- insert    :: forall d eff.  String ->                               s d -> Eff (d3::D3|eff) (s d)
   filter    :: forall d eff.  String ->                               s d -> Eff (d3::D3|eff) (s d)
   filter'   :: forall d eff.  (d -> Boolean) ->                       s d -> Eff (d3::D3|eff) (s d)
   order     :: forall d eff.                                          s d -> Eff (d3::D3|eff) (s d)
@@ -271,7 +276,7 @@ instance existingSelection :: Existing Selection where
   text''    = unsafeText''
   remove    = unsafeRemove
   select    = unsafeSelect
-  insert    = unsafeInsert
+  -- insert    = unsafeInsert
   filter    = unsafeFilter
   filter'   = unsafeFilter'
   order     = unsafeOrder
@@ -292,7 +297,7 @@ instance existingUpdate :: Existing Update where
   text''    = unsafeText''
   remove    = unsafeRemove
   select    = unsafeSelect
-  insert    = unsafeInsert
+  -- insert    = unsafeInsert
   filter    = unsafeFilter
   filter'   = unsafeFilter'
   order     = unsafeOrder
@@ -313,7 +318,7 @@ instance existingTransition :: Existing Transition where
   text''    = unsafeText''
   remove    = unsafeRemove
   select    = unsafeSelect
-  insert    = unsafeInsert
+  -- insert    = unsafeInsert
   filter    = unsafeFilter
   filter'   = unsafeFilter'
   order     = unsafeOrder

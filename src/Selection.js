@@ -3,8 +3,9 @@
 
 // module Graphics.D3.Selection
 
+exports.unsafeInsertImpl  = unSafeInsert
+exports.unsafeAppendImpl  = unsafeAppend
 exports.selectImpl        = select
-exports.insertImpl        = insert
 exports.filterImpl        = filter
 exports.filterPImpl       = filter
 exports.selectElementImpl = selectElement
@@ -20,7 +21,6 @@ exports.enterImpl         = enter
 exports.exitImpl          = exit
 exports.transitionImpl    = transition
 exports.transitionImplP   = transitionP
-exports.unsafeAppendImpl  = unsafeAppend
 exports.unsafeAttrImpl    = unsafeAttr
 exports.unsafeAttrImplP   = unsafeAttrP
 exports.unsafeAttrImplPP  = unsafeAttrPP
@@ -53,6 +53,14 @@ function logMessage(level, message, callback) {
   }
 }
 // end
+// functions for typeclass "Appendable"
+function unsafeInsert(selector, selection) {
+  return selection.insert(selector);
+}
+function unsafeAppend(tag, selection) {
+  return selection.append(tag);
+}
+
 function unsafeRemove(selection) {
   d3.selection.prototype.remove(selection);
 }
@@ -67,9 +75,6 @@ function selectAll(selector, selection) {
 }
 function select(selector, selection) {
   return selection.select(selector);
-}
-function insert(selector, selection) {
-  return selection.insert(selector);
 }
 function filter(selector, selection) {
   return selection.filter(selector);
@@ -97,9 +102,6 @@ function transition(selection) {
 }
 function transitionP(name, selection) {
   return selection.transition(name);
-}
-function unsafeAppend(tag, selection) {
-  return selection.append(tag);
 }
 function unsafeAttr(key, val, selection) {  // val is simple value
   return selection.attr(key, val);
