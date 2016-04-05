@@ -39,8 +39,7 @@ exports.durationImplP     = durationP
 exports.durationImplPP    = durationPP
 
 // event handlers
-exports.onClickImpl             = attachCallbackS
-exports.onDoubleClickImpl       = attachCallbackD
+exports.onImpl            = attachCallbackToEvent
 
 // only here temporarily as a guide
 exports.logMessageImpl = logMessage
@@ -153,11 +152,7 @@ function durationPP(duration, transition) {
 }
 
 // functions that attach event handlers
-function attachCallbackS(selection, callback) {
-  selection.on("click", callback);
-  return selection;
-}
-function attachCallbackD(selection, callback) {
-  selection.on("dblclick", callback);
+function attachCallbackToEvent(selection, eventType, callback) {
+  selection.on(eventType, callback); // have to actually decode this eventType here
   return selection;
 }

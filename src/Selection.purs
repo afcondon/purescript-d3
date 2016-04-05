@@ -43,21 +43,19 @@ module Graphics.D3.Selection
   , duration
   , duration'
   , duration''
-  , onClick
-  , onDoubleClick
+  , on
   ) where
 
-import Graphics.D3.Base
-import Graphics.D3.EffFnExtra
+import Prelude ( Unit() )
 import Control.Monad.Eff
 import Control.Monad.Eff.Console
-
+import DOM.Event.Types (EventType(..))
 import Data.Foreign
-
 import Data.Nullable
 import Data.Function.Eff
 
-import Prelude ( Unit() )
+import Graphics.D3.Base
+import Graphics.D3.EffFnExtra
 
 -- The "selection-y" types, parameterized by the type of their bound data
 foreign import data Selection :: * -> *
@@ -326,7 +324,7 @@ instance existingTransition :: Existing Transition where
   transition' = unsafeTransitionN
 
 
--- So, you're _setting_ a click handler on a _Selection_ but it gets _called_ with the HTML element that
+-- So, say you're _setting_ a click handler on a _Selection_ but it gets _called_ with the HTML element that
 -- received the click event
 -- Now, you can get the selection in JS by just doing d3.select(this) but because of our wrapper EffFn1
 -- around the callback there is no "this" in the PureScript callback
@@ -334,25 +332,17 @@ instance existingTransition :: Existing Transition where
     -- perhaps it will pass a Tuple of the two of them in the future
     -- perhaps this can be formalized / librarized / templatized if it works
 
+-- generic "on" function replaces single and double click functions and works for any DOM event
 class Clickable c where
-  onClick       :: forall d eff. (ElementAndDatum d -> Eff (d3::D3|eff) Unit) -> c -> Eff (d3::D3|eff) c
-  onDoubleClick :: forall d eff. (ElementAndDatum d -> Eff (d3::D3|eff) Unit) -> c -> Eff (d3::D3|eff) c
+  on            :: forall d eff. EventType -> (ElementAndDatum d -> Eff (d3::D3|eff) Unit) -> c -> Eff (d3::D3|eff) c
 instance clickableSelectionI :: Clickable (Selection a) where
-  onClick       callback clickableSelection = runEffFn2 onClickImpl        clickableSelection (mkEffFnTuple1 callback)
-  onDoubleClick callback clickableSelection = runEffFn2 onDoubleClickImpl  clickableSelection (mkEffFnTuple1 callback)
+  on eventType callback clickableSelection  = runEffFn3 onImpl             clickableSelection eventType (mkEffFnTuple1 callback)
 
-foreign import onClickImpl :: forall eff a d. -- (Clickable => c)
- EffFn2 (d3::D3|eff)
-        (Selection a)               -- 1st argument for EffFn2, the selection itself
-        (EffFnTuple1 (d3::D3|eff) -- 2nd argument for EffFn2, the callback function
-                (ElementAndDatum d)   -- 1st and only argument for EffFn1, d3 element, ie "this", passed thru to callback
-                Unit)                 -- result of EffFn1, callback result is just Unit
-        (Selection a)               -- result of EffFn2, returns selection for "fluid interface" / monadic chain
-
-foreign import onDoubleClickImpl :: forall eff a d. -- (Clickable => c)
- EffFn2 (d3::D3|eff)
-        (Selection a)               -- 1st argument for EffFn2, the selection itself
-        (EffFnTuple1 (d3::D3|eff) -- 2nd argument for EffFn2, the callback function
-                (ElementAndDatum d)   -- 1st and only argument for EffFn1, d3 element, ie "this", passed thru to callback
+foreign import onImpl :: forall eff a d. -- (Clickable => c)
+ EffFn3 (d3::D3|eff)
+        (Selection a)               -- 1st argument for EffFn3, the selection itself
+        EventType                   -- 2nd argument for EffFn3, the type of the event being bound
+        (EffFnTuple1 (d3::D3|eff)   -- 3rd argument for EffFn3, the callback function
+                (ElementAndDatum d)   -- 2nd arg for callback EffFn2 d3 element, ie "this", passed thru to callback
                 Unit)                 -- result of EffFn1, callback result is just Unit
         (Selection a)               -- result of EffFn2, returns selection for "fluid interface" / monadic chain
