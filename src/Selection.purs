@@ -8,7 +8,6 @@ module Graphics.D3.Selection
   , class AttrValue
   , class Existing
   , class Appendable
-  , class Clickable
   , rootSelect
   , rootSelectAll
   , filter
@@ -333,16 +332,17 @@ instance existingTransition :: Existing Transition where
     -- perhaps this can be formalized / librarized / templatized if it works
 
 -- generic "on" function replaces single and double click functions and works for any DOM event
-class Clickable c where
-  on            :: forall d eff. EventType -> (ElementAndDatum d -> Eff (d3::D3|eff) Unit) -> c -> Eff (d3::D3|eff) c
-instance clickableSelectionI :: Clickable (Selection a) where
-  on eventType callback clickableSelection  = runEffFn3 onImpl             clickableSelection eventType (mkEffFnTuple1 callback)
+on :: forall a d eff. EventType
+                -> (ElementAndDatum d -> Eff (d3::D3|eff) Unit)
+                -> (Selection a)
+                -> Eff (d3::D3|eff) (Selection a)
+on event callback selection  = runEffFn3 onImpl selection event (mkEffFnTuple1 callback)
 
-foreign import onImpl :: forall eff a d. -- (Clickable => c)
- EffFn3 (d3::D3|eff)
+foreign import onImpl :: forall eff a d.
+  EffFn3 (d3::D3|eff)
         (Selection a)               -- 1st argument for EffFn3, the selection itself
         EventType                   -- 2nd argument for EffFn3, the type of the event being bound
         (EffFnTuple1 (d3::D3|eff)   -- 3rd argument for EffFn3, the callback function
-                (ElementAndDatum d)   -- 2nd arg for callback EffFn2 d3 element, ie "this", passed thru to callback
-                Unit)                 -- result of EffFn1, callback result is just Unit
+            (ElementAndDatum d)       -- arg for callback EffFn1, a d3 element
+            Unit)                     -- result of EffFn1, ie only Unit
         (Selection a)               -- result of EffFn2, returns selection for "fluid interface" / monadic chain
