@@ -343,6 +343,6 @@ foreign import onImpl :: forall eff a d.
         (Selection a)               -- 1st argument for EffFn3, the selection itself
         EventType                   -- 2nd argument for EffFn3, the type of the event being bound
         (EffFnTuple1 (d3::D3|eff)   -- 3rd argument for EffFn3, the callback function
-            (ElementAndDatum d)       -- arg for callback EffFn1, a d3 element
-            Unit)                     -- result of EffFn1, ie only Unit
-        (Selection a)               -- result of EffFn2, returns selection for "fluid interface" / monadic chain
+            (ElementAndDatum d)       -- arg for callback EffFn1, Tuple of D3Element and a datum
+            Unit)                     --  Unit, result of EffFn1
+        (Selection a)               -- result of EffFn3, returns selection for "fluid interface" / monadic chain

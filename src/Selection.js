@@ -153,6 +153,6 @@ function durationPP(duration, transition) {
 
 // functions that attach event handlers
 function attachCallbackToEvent(selection, eventType, callback) {
-  selection.on(eventType, callback); // have to actually decode this eventType here
+  selection.on(eventType, callback); 
   return selection;
 }
