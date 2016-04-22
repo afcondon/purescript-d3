@@ -39,7 +39,8 @@ exports.durationImplP     = durationP
 exports.durationImplPP    = durationPP
 
 // event handlers
-exports.onImpl            = attachCallbackToEvent
+exports.onImpl             = attachCallbackToEvent
+exports.onImplWithProperty = attachCallbackToEventWithProperty
 
 // only here temporarily as a guide
 exports.logMessageImpl = logMessage
@@ -153,6 +154,14 @@ function durationPP(duration, transition) {
 
 // functions that attach event handlers
 function attachCallbackToEvent(selection, eventType, callback) {
-  selection.on(eventType, callback); 
+  selection.on(eventType, callback);
+  return selection;
+}
+
+// another variation useful if you need to pass something arbitrary thru to the callback fn
+// achieved by caching the thing you want sent in a Property in the D3 selection
+function attachCallbackToEventWithProperty(selection, eventType, callback, propname, prop) {
+  selection.on(eventType, callback);
+  selection.property(propname, prop);
   return selection;
 }

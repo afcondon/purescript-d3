@@ -43,6 +43,7 @@ module Graphics.D3.Selection
   , duration'
   , duration''
   , on
+  , on'
   ) where
 
 import Prelude ( Unit() )
@@ -336,13 +337,31 @@ on :: forall a d eff. EventType
                 -> (ElementAndDatum d -> Eff (d3::D3|eff) Unit)
                 -> (Selection a)
                 -> Eff (d3::D3|eff) (Selection a)
-on event callback selection  = runEffFn3 onImpl selection event (mkEffFnTuple1 callback)
+on event callback selection  = runEffFn3 onImpl selection event (mkCallbackWithT callback)
 
 foreign import onImpl :: forall eff a d.
   EffFn3 (d3::D3|eff)
         (Selection a)               -- 1st argument for EffFn3, the selection itself
         EventType                   -- 2nd argument for EffFn3, the type of the event being bound
-        (EffFnTuple1 (d3::D3|eff)   -- 3rd argument for EffFn3, the callback function
+        (D3EffCallback (d3::D3|eff)   -- 3rd argument for EffFn3, the callback function
             (ElementAndDatum d)       -- arg for callback EffFn1, Tuple of D3Element and a datum
             Unit)                     --  Unit, result of EffFn1
+        (Selection a)               -- result of EffFn3, returns selection for "fluid interface" / monadic chain
+
+-- another version of 'on' which packages an additional property with the callback params
+on' :: forall a d p eff.
+    EventType -> PropertyName -> p
+    -> (CallbackParamBlock d p -> Eff (d3::D3|eff) Unit) -> (Selection a) -> Eff (d3::D3|eff) (Selection a)
+on' evType propName prop callback sel = runEffFn5 onImplWithProperty sel evType (mkCallbackWithProp callback propName) propName prop
+
+foreign import onImplWithProperty :: forall eff a d p.
+  EffFn5 (d3::D3|eff)
+        (Selection a)               -- 1st argument for EffFn3, the selection itself
+        EventType                   -- 2nd argument for EffFn3, the type of the event being bound
+        (D3EffCallbackP (d3::D3|eff)   -- 3rd argument for EffFn3, the callback function
+            (CallbackParamBlock d p)       -- arg for callback EffFn1, Tuple of D3Element and a datum
+            PropertyName
+            Unit)                     --  Unit, result of EffFn1
+        PropertyName
+        p
         (Selection a)               -- result of EffFn3, returns selection for "fluid interface" / monadic chain

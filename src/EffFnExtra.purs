@@ -1,14 +1,25 @@
-module Graphics.D3.EffFnExtra (ElementAndDatum(), mkEffFnThis1, EffFnThis1, mkEffFnTuple1, EffFnTuple1) where
+module Graphics.D3.EffFnExtra
+   (ElementAndDatum()
+  , CallbackParamBlock()
+  , PropertyName
+  , mkCallbackWithT
+  , mkCallbackWithProp
+  , D3EffCallback
+  , D3EffCallbackP) where
 
 import Graphics.D3.Base
 import Control.Monad.Eff
 import Data.Tuple
 
-foreign import data EffFnThis1  :: # ! -> * -> * -> *
-foreign import data EffFnTuple1 :: # ! -> * -> * -> *
+type PropertyName = String
+
+foreign import data D3EffCallback :: # ! -> * -> * -> *
+foreign import data D3EffCallbackP :: # ! -> * -> * -> * -> *
 
 type ElementAndDatum d = Tuple d D3Element
+foreign import mkCallbackWithT    :: forall eff d r.    (ElementAndDatum d -> Eff eff r)
+  -> D3EffCallback eff (ElementAndDatum d) r
 
-foreign import mkEffFnThis1  :: forall eff d r. (D3Element -> Eff eff r) -> EffFnThis1 eff D3Element r
-
-foreign import mkEffFnTuple1  :: forall eff d r. (ElementAndDatum d -> Eff eff r) -> EffFnTuple1 eff (ElementAndDatum d) r
+type CallbackParamBlock d p = { datum :: d, elem :: D3Element, prop :: p }
+foreign import mkCallbackWithProp :: forall eff d p r.  (CallbackParamBlock d p -> Eff eff r) -> PropertyName
+  -> D3EffCallbackP eff (CallbackParamBlock d p) PropertyName r
