@@ -3,18 +3,18 @@
 
 // module Graphics.D3.Util
 
-exports.min           = min
-exports.min$prime     = min$prime
-exports.max           = max
-exports.max$prime     = max$prime
-exports.extent        = extent
-exports.extent$prime  = extent$prime
+exports.min       = min
+exports.minFn     = minFn
+exports.max       = max
+exports.maxFn     = maxFn
+exports.extent    = extent
+exports.extentFn  = extentFn
 
 
-function min$prime(fn, data) {
+function minFn(fn, data) {
   return d3.min(data,fn);
 }
-function max$prime(fn, data) {
+function maxFn(fn, data) {
   return d3.max(data, fn);
 }
 function min(data) {
@@ -26,6 +26,6 @@ function max(data) {
 function extent(data) {
   return d3.extent(data);
 }
-function extent$prime(fn, data) {
+function extentFn(fn, data) {
   return d3.extent(data, fn);
 }

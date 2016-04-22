@@ -2,10 +2,10 @@ module Graphics.D3.Util
   ( Magnitude
   , min
   , max
-  , min'
-  , max'
+  , minFn
+  , maxFn
   , extent
-  , extent'
+  , extentFn
   , (..)
   , (...)
   ) where
@@ -22,14 +22,14 @@ class Magnitude n
 instance numberMagnitude :: Magnitude Number
 instance dateMagnitude   :: Magnitude JSDate
 
-foreign import min'     :: forall d m. (Magnitude m) => (d -> m) -> Array d -> m
-foreign import max'     :: forall d m. (Magnitude m) => (d -> m) -> Array d -> m
+foreign import minFn     :: forall d m. (Magnitude m) => (d -> m) -> Array d -> m
+foreign import maxFn     :: forall d m. (Magnitude m) => (d -> m) -> Array d -> m
 foreign import min      :: forall m.   (Magnitude m) => Array m -> m
 foreign import max      :: forall d m. (Magnitude m) => Array m -> m
 -- extent takes a data array and returns [min,max]
 -- not restricted to Number, i.e. also works with time
 foreign import extent   :: forall m.   (Magnitude m) => Array m -> Array m
-foreign import extent'  :: forall d m. (Magnitude m) => (d->m) -> Array d -> Array m
+foreign import extentFn  :: forall d m. (Magnitude m) => (d->m) -> Array d -> Array m
 
 -- Syntactic sugar to make chained monadic statements look similar to the
 -- "fluid interface" style of chained method calls in JavaScript

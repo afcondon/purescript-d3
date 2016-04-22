@@ -17,10 +17,10 @@ exports.unsafeInterpolateImpl = interpolate
 exports.unsafeClampImpl       = clamp
 exports.unsafeNiceImplC       = niceWithCount
 exports.unsafeNiceImpl        = nice
-exports.unsafeGetTicksC       = ticksWithCount
-exports.unsafeGetTicks        = ticksDefault
-exports.unsafeGetTickFormatC  = tickFormat
-exports.unsafeGetTickFormat   = tickFormatDefault
+exports.unsafeGetTicksImplC       = ticksWithCount
+exports.unsafeGetTicksImpl        = ticksDefault
+exports.unsafeGetTickFormatImplS  = tickFormat
+exports.unsafeGetTickFormatImpl   = tickFormatDefault
 
 exports.linearScale         = d3.scale.linear;
 exports.powerScale          = d3.scale.pow;
