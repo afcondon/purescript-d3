@@ -21,6 +21,7 @@ exports.enterImpl         = enter
 exports.exitImpl          = exit
 exports.transitionImpl    = transition
 exports.transitionImplP   = transitionP
+exports.unsafeSizeImpl    = unsafeSize
 exports.unsafeAttrImpl    = unsafeAttr
 exports.unsafeAttrImplP   = unsafeAttrP
 exports.unsafeAttrImplPP  = unsafeAttrPP
@@ -62,7 +63,7 @@ function unsafeAppend(tag, selection) {
 }
 
 function unsafeRemove(selection) {
-  d3.selection.prototype.remove(selection);
+  return selection.remove();
 }
 function rootSelect(selector) {
   return d3.select(selector);
@@ -151,7 +152,9 @@ function durationP(duration, transition) {
 function durationPP(duration, transition) {
   return transition.duration(function (d, i) { return duration(d)(i); });
 }
-
+function unsafeSize(selection) {
+  return selection.size();
+}
 // functions that attach event handlers
 function attachCallbackToEvent(selection, eventType, callback) {
   selection.on(eventType, callback);

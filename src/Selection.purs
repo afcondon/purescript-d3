@@ -26,6 +26,7 @@ module Graphics.D3.Selection
   , transition'
   , append
   , remove
+  , size'       -- 'size' clashes somehow but not sure where, the error says in Graphics.D3.Base but that's not true
   , attr
   , attr'
   , attr''
@@ -46,15 +47,17 @@ module Graphics.D3.Selection
   , on'
   ) where
 
-import Prelude ( Unit() )
+import Prelude ( Unit(), ($) )
 import Control.Monad.Eff
 import Control.Monad.Eff.Console
+import Control.Monad.Eff.Class (liftEff)
 import DOM.Event.Types (EventType(..))
 import Data.Foreign
+import Data.Int (floor)
 import Data.Nullable
 import Data.Function.Eff
 
-import Graphics.D3.Base
+import Graphics.D3.Base (D3, D3Element)
 import Graphics.D3.EffFnExtra
 
 -- The "selection-y" types, parameterized by the type of their bound data
@@ -86,7 +89,6 @@ foreign import bindDataImplS      :: forall d o n eff. EffFn3 (d3::D3|eff) (Arra
 foreign import selectElementImpl  :: forall d eff.     EffFn1 (d3::D3|eff) D3Element                               (Selection d)
 foreign import rootSelectImpl     :: forall eff.       EffFn1 (d3::D3|eff) String                                  (Selection Void)
 foreign import rootSelectAllImpl  :: forall eff.       EffFn1 (d3::D3|eff) String                                  (Selection Void)
-foreign import unsafeRemoveImpl   :: forall s eff.     EffFn1 (d3::D3|eff) s                                       Unit
 foreign import enterImpl          :: forall d eff.     EffFn1 (d3::D3|eff) (Update d)                              (Enter d)
 foreign import exitImpl           :: forall d eff.     EffFn1 (d3::D3|eff) (Update d)                              (Exit d)
 
@@ -94,6 +96,7 @@ foreign import exitImpl           :: forall d eff.     EffFn1 (d3::D3|eff) (Upda
 foreign import unsafeAppendImpl   :: forall x s eff.   EffFn2 (d3::D3|eff) String x                                 s
 foreign import unsafeInsertImpl   :: forall x s eff.   EffFn2 (d3::D3|eff) String x                                 s
 -- following functions are for typeclass (Existing)
+foreign import unsafeRemoveImpl   :: forall s eff.     EffFn1 (d3::D3|eff) s                                        s
 foreign import filterPImpl        :: forall s d eff.   EffFn2 (d3::D3|eff) (d -> Boolean) s                         s
 foreign import filterImpl         :: forall s eff.     EffFn2 (d3::D3|eff) String s                                 s
 foreign import selectImpl         :: forall s eff.     EffFn2 (d3::D3|eff) String s                                 s
@@ -109,6 +112,7 @@ foreign import unsafeTextImplPP   :: forall d s eff.   EffFn2 (d3::D3|eff) (d ->
 foreign import unsafeAttrImpl     :: forall s v eff.   EffFn3 (d3::D3|eff) String v s                               s
 foreign import transitionImplP    :: forall s d eff.   EffFn2 (d3::D3|eff) String s                                (Transition d)
 foreign import transitionImpl     :: forall s d eff.   EffFn1 (d3::D3|eff) s                                       (Transition d)
+foreign import unsafeSizeImpl     :: forall s eff.     EffFn1 (d3::D3|eff) s                                        Int
 
 foreign import delayImpl          :: forall d eff.     EffFn2 (d3::D3|eff) Number (Transition d)                   (Transition d)
 foreign import delayImplP         :: forall d eff.     EffFn2 (d3::D3|eff) (d -> Number) (Transition d)            (Transition d)
@@ -122,7 +126,7 @@ foreign import durationImplPP     :: forall d eff.     EffFn2 (d3::D3|eff) (d ->
 rootSelect :: forall eff.      String -> Eff (d3::D3|eff) (Selection Void)
 rootSelect = runEffFn1 rootSelectImpl
 
-unsafeRemove  :: forall s eff.    s -> Eff (d3::D3|eff) Unit
+unsafeRemove  :: forall s eff.    s -> Eff (d3::D3|eff) s
 unsafeRemove  = runEffFn1 unsafeRemoveImpl
 
 rootSelectAll :: forall eff.      String -> Eff (d3::D3|eff) (Selection Void)
@@ -221,6 +225,10 @@ unsafeAttr'   = runEffFn3 unsafeAttrImpl
 unsafeAttr''   :: forall d v s eff.    (AttrValue v) =>  String -> (d -> Number -> v) -> s -> Eff (d3::D3|eff) s
 unsafeAttr''   = runEffFn3 unsafeAttrImpl
 
+unsafeSize     :: forall s eff. s -> Eff (d3::D3|eff) Int
+unsafeSize     = runEffFn1 unsafeSizeImpl
+
+
 -- Selection-y things which can be appended to / inserted into
 class Appendable s where
   append :: forall d eff. String -> s d -> Eff (d3::D3|eff) (Selection d)
@@ -251,7 +259,8 @@ class Existing s where
   text      :: forall d eff.             String ->                    s d -> Eff (d3::D3|eff) (s d)
   text'     :: forall d eff.             (d -> String) ->             s d -> Eff (d3::D3|eff) (s d)
   text''    :: forall d eff.             (d -> Number -> String) ->   s d -> Eff (d3::D3|eff) (s d)
-  remove    :: forall d eff.                                          s d -> Eff (d3::D3|eff) Unit
+  remove    :: forall d eff.                                          s d -> Eff (d3::D3|eff) (s d)
+  size'     :: forall d eff.                                          s d -> Eff (d3::D3|eff) Int
   select    :: forall d eff.  String ->                               s d -> Eff (d3::D3|eff) (s d)
   -- insert    :: forall d eff.  String ->                               s d -> Eff (d3::D3|eff) (s d)
   filter    :: forall d eff.  String ->                               s d -> Eff (d3::D3|eff) (s d)
@@ -280,6 +289,7 @@ instance existingSelection :: Existing Selection where
   order     = unsafeOrder
   transition = unsafeTransition
   transition' = unsafeTransitionN
+  size'       = unsafeSize
 
 instance existingUpdate :: Existing Update where
   attr      = unsafeAttr
@@ -301,6 +311,7 @@ instance existingUpdate :: Existing Update where
   order     = unsafeOrder
   transition = unsafeTransition
   transition' = unsafeTransitionN
+  size'       = unsafeSize
 
 instance existingTransition :: Existing Transition where
   attr      = unsafeAttr
@@ -322,6 +333,7 @@ instance existingTransition :: Existing Transition where
   order     = unsafeOrder
   transition = unsafeTransition
   transition' = unsafeTransitionN
+  size'       = unsafeSize
 
 
 -- So, say you're _setting_ a click handler on a _Selection_ but it gets _called_ with the HTML element that
