@@ -3,4 +3,4 @@
 
 // module Graphics.D3.SvgShapes
 
-exports.svgDiagonal = d3.svg.diagonal
+exports.svgDiagonal = d3.svg.diagonal()
