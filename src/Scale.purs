@@ -1,6 +1,6 @@
 module Graphics.D3.Scale
-  ( Scale
-  , Quantitative
+  ( class Scale
+  , class Quantitative
   , LinearScale()
   , PowerScale()
   , LogScale()
@@ -47,7 +47,7 @@ import Data.Maybe
 
 -- import Data.Foreign.EasyFFI
 
-import Prelude ( ($), (>>=), return, bind )
+import Prelude ( ($), (>>=), bind )
 
 -- ffi = unsafeForeignFunction
 
