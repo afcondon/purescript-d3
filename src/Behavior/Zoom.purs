@@ -1,13 +1,13 @@
 module Graphics.D3.Behavior.Zoom where
 
-import Prelude (Unit, show, (++))
+import Prelude (Unit, show, (<>))
 import Data.Array ((!!))
 import Data.Maybe (fromMaybe)
 import Control.Monad.Eff (Eff)
 import Data.Function.Eff
 import Graphics.D3.Base (D3)
 
-foreign import data Zoomable :: * 
+foreign import data Zoomable :: *
 type Translate = Array Number -- actually only two element array in D3
 type Scale     = Number
 type ZoomEvent = { translate :: Translate, scale :: Scale }
@@ -19,12 +19,12 @@ createZoom = createZoomableImpl
 
 -- simple utilities to aid in constructing a transform from a ZoomEvent
 showTranslate :: Translate -> String
-showTranslate t = "translate(" ++ show x ++ "," ++ show y ++ ")" where
+showTranslate t = "translate(" <> show x <> "," <> show y <> ")" where
   x = fromMaybe 0.0 (t !! 0) -- in fact the array is guaranteed to have two elements by D3 spec
   y = fromMaybe 0.0 (t !! 1) -- thus, fromMaybe default values will never be used
 
 showScale :: Scale -> String
-showScale s = "scale(" ++ show s ++ ")"
+showScale s = "scale(" <> show s <> ")"
 
 -- defition of the handler setter using Data.Functions.Eff utilities
 onZoom :: forall eff. (ZoomEvent -> Eff (d3::D3|eff) Unit) -> Zoomable -> Eff (d3::D3|eff) Zoomable
