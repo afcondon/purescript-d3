@@ -32,7 +32,7 @@ foreign import extentFn  :: forall d m. (Magnitude m) => (d->m) -> Array d -> Ar
 
 -- Syntactic sugar to make chained monadic statements look similar to the
 -- "fluid interface" style of chained method calls in JavaScript
-infixl 1 bind as ..        -- (..) = (>>=)
+infixl 4 bind as ..        -- (..) = (>>=)
 -- >>= is defined in Prelude as
 -- infixl 1 >>=
 
@@ -40,6 +40,6 @@ infixl 1 bind as ..        -- (..) = (>>=)
 -- Reversed function application, useful for applying extended monadic chains
 -- to already-obtained values
 flipply = flip ($)
-infixr 0 flipply as ...   -- (...) = flip ($)
+infixl 4 flipply as ...   -- (...) = flip ($)
 -- ($) is defined in Prelude as
 -- infixr 0 $
