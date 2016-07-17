@@ -20,15 +20,13 @@ module Graphics.D3.Layout.Force
   ) where
 
 import Prelude (Unit)
-import Control.Monad.Eff
-import Data.Function.Eff
-import Data.Foreign
+import Control.Monad.Eff (Eff)
+import Data.Function.Eff (EffFn2, EffFn1, runEffFn2, mkEffFn1, runEffFn1)
+import Data.Foreign (Foreign)
 
-import Graphics.D3.Base
-import Graphics.D3.EffFnExtra
-import Graphics.D3.Selection
-import Graphics.D3.Util
-import Graphics.D3.Layout.Base
+import Graphics.D3.Base (D3)
+import Graphics.D3.Selection (Selection)
+import Graphics.D3.Layout.Base (class GraphLayout, Link, Node)
 
 foreign import data ForceLayout :: *
 
@@ -112,10 +110,10 @@ foreign import onTickImpl :: forall eff e r.
          ForceLayout
          ForceLayout
 
-onDragStart     :: forall eff e r. (Eff (d3::D3|eff) Unit) -> ForceLayout -> Eff (d3::D3|eff) ForceLayout
+onDragStart     :: forall eff. (Eff (d3::D3|eff) Unit) -> ForceLayout -> Eff (d3::D3|eff) ForceLayout
 onDragStart callback force  = runEffFn2 onDragStartImpl force callback
 
-foreign import onDragStartImpl :: forall eff e r.
+foreign import onDragStartImpl :: forall eff.
   EffFn2 (d3::D3|eff)
           ForceLayout
          (Eff (d3::D3|eff) Unit) -- callback
