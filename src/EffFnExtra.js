@@ -20,7 +20,13 @@ exports.mkCallbackWithT = function mkCallbackWithT(fn) {
 exports.mkCallbackWithProp = function mkCallbackWithProp(fn) {
   return function(propName) {
     return function(d) {
-      var cbParams = { datum: d, elem: this, prop: this[propName], timestamp: d3.event.timeStamp };
+      var cbParams = { datum: d, elem: this
+                     , prop: this[propName]
+                     , timestamp: d3.event.timeStamp
+                     , meta: d3.event.metaKey
+                     , shift: d3.event.shiftKey
+                     , ctrl: d3.event.ctrlKey
+                     , alt: d3.event.altKey };
       return fn(cbParams)();
     }
   };

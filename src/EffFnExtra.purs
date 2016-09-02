@@ -20,6 +20,13 @@ type ElementAndDatum d = Tuple d D3Element
 foreign import mkCallbackWithT    :: forall eff d r.    (ElementAndDatum d -> Eff eff r)
   -> D3EffCallback eff (ElementAndDatum d) r
 
-type CallbackParamBlock d p = { datum :: d, elem :: D3Element, prop :: p, timestamp :: Number }
+type CallbackParamBlock d p = { datum :: d
+                              , elem :: D3Element
+                              , prop :: p
+                              , timestamp :: Number
+                              , meta :: Boolean
+                              , shift :: Boolean
+                              , ctrl :: Boolean
+                              , alt :: Boolean }
 foreign import mkCallbackWithProp :: forall eff d p r.  (CallbackParamBlock d p -> Eff eff r) -> PropertyName
   -> D3EffCallbackP eff (CallbackParamBlock d p) PropertyName r
