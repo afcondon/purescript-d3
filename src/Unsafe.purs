@@ -6,8 +6,8 @@ module Graphics.D3.Unsafe (
   ) where
 
 import Graphics.D3.Base
-import Control.Monad.Eff
-import Data.Function.Eff
+import Control.Monad.Eff (Eff)
+import Data.Function.Eff (EffFn1, EffFn2, runEffFn1, runEffFn2)
 -- import Data.Foreign.EasyFFI
 
 foreign import unsafeDomainImpl     :: forall s d r eff.  EffFn2 (d3::D3|eff) (Array d) (s d r) (s d r)

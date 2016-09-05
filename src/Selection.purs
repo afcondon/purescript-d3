@@ -48,17 +48,12 @@ module Graphics.D3.Selection
   ) where
 
 import Prelude ( Unit(), ($) )
-import Control.Monad.Eff
-import Control.Monad.Eff.Console
-import Control.Monad.Eff.Class (liftEff)
-import DOM.Event.Types (EventType(..))
-import Data.Foreign
-import Data.Int (floor)
-import Data.Nullable
-import Data.Function.Eff
+import Control.Monad.Eff (Eff)
+import DOM.Event.Types (EventType)
+import Data.Function.Eff (EffFn5, EffFn3, EffFn2, EffFn1, runEffFn5, runEffFn3, runEffFn1, runEffFn2)
 
 import Graphics.D3.Base (D3, D3Element)
-import Graphics.D3.EffFnExtra
+import Graphics.D3.EffFnExtra (PropertyName, CallbackParamBlock, D3EffCallbackP, ElementAndDatum, D3EffCallback, mkCallbackWithProp, mkCallbackWithT)
 
 -- The "selection-y" types, parameterized by the type of their bound data
 foreign import data Selection :: * -> *

@@ -12,7 +12,7 @@ import Control.Monad.Eff (Eff)
 import Data.Function.Eff (EffFn2, runEffFn2)
 
 import Graphics.D3.Base (D3, D3Eff)
-import Graphics.D3.Selection (class Existing, Selection)
+import Graphics.D3.Selection (class Existing)
 import Graphics.D3.Scale (class Scale)
 
 foreign import data Axis :: *

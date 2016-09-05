@@ -36,20 +36,14 @@ module Graphics.D3.Scale
   , rangeExtent
   ) where
 
-import Control.Monad.Eff
-import Data.Function.Eff
-import Graphics.D3.Base
-import Graphics.D3.Interpolate
-import Graphics.D3.Unsafe
+import Control.Monad.Eff (Eff)
+import Data.Function.Eff (EffFn1, EffFn5, EffFn4, EffFn2, EffFn3, runEffFn1, runEffFn5, runEffFn4, runEffFn2, runEffFn3)
+import Graphics.D3.Base (D3)
+import Graphics.D3.Interpolate (Interpolator)
+import Graphics.D3.Unsafe (unsafeToFunction, unsafeCopy, unsafeRange, unsafeDomain)
 
-import Data.Tuple
-import Data.Maybe
-
--- import Data.Foreign.EasyFFI
-
-import Prelude ( ($), (>>=), bind )
-
--- ffi = unsafeForeignFunction
+import Data.Tuple (Tuple)
+import Data.Maybe (Maybe(..))
 
 -- A base class for all scale types
 
@@ -136,8 +130,8 @@ foreign import quantilesImpl        :: forall r eff.    EffFn1 (d3::D3|eff) (Qua
 foreign import rangePointsImpl      :: forall d eff.    EffFn4 (d3::D3|eff) Number Number Number (OrdinalScale d Number) (OrdinalScale d Number)
 foreign import rangeBandsImpl       :: forall d eff.    EffFn5 (d3::D3|eff) Number Number Number Number (OrdinalScale d Number) (OrdinalScale d Number)
 foreign import rangeRoundBandsImpl  :: forall d eff.    EffFn5 (d3::D3|eff) Number Number Number Number (OrdinalScale d Number) (OrdinalScale d Number)
-foreign import rangeBandImpl        :: forall d r eff.  EffFn1 (d3::D3|eff) (OrdinalScale d Number) Number
-foreign import rangeExtentImpl      :: forall d r eff.  EffFn1 (d3::D3|eff) (OrdinalScale d Number) (Tuple Number Number)
+foreign import rangeBandImpl        :: forall d eff.  EffFn1 (d3::D3|eff) (OrdinalScale d Number) Number
+foreign import rangeExtentImpl      :: forall d eff.  EffFn1 (d3::D3|eff) (OrdinalScale d Number) (Tuple Number Number)
 
 -- Power scale methods
 exponent :: forall r eff. Number -> PowerScale Number r -> Eff (d3::D3|eff) (PowerScale Number r)
