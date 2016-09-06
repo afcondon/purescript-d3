@@ -22,17 +22,14 @@ exports.unsafeGetTicksImpl        = ticksDefault
 exports.unsafeGetTickFormatImplS  = tickFormat
 exports.unsafeGetTickFormatImpl   = tickFormatDefault
 
-exports.linearScale         = d3.scale.linear;
-exports.powerScale          = d3.scale.pow;
-exports.sqrtScale           = d3.scale.sqrt;
-exports.quantizeScale       = d3.scale.quantize;
-exports.quantileScale       = d3.scale.quantile;
-exports.thresholdScale      = d3.scale.threshold;
-exports.ordinalScale        = d3.scale.ordinal;
-
-exports.logScale = function() {  // why is this different from others? TODO
-    return d3.scale.log();
-};
+exports.linearScale         = d3.scaleLinear;
+exports.powerScale          = d3.scalePow;
+exports.sqrtScale           = d3.scaleSqrt;
+exports.quantizeScale       = d3.scaleQuantize;
+exports.quantileScale       = d3.scaleQuantile;
+exports.thresholdScale      = d3.scaleThreshold;
+exports.ordinalScale        = d3.scaleOrdinal;
+exports.logScale            = d3.scaleLog;
 
 function niceWithCount(count, scale) {
   return scale.nice(count);
@@ -52,7 +49,6 @@ function tickFormat(count, format, scale) {
 function tickFormatDefault(count, scale) {
   return scale.tickFormat(count);
 }
-
 
 function invert(scale) {
   return scale.copy().invert;       // function brackets missing?? check this TODO
