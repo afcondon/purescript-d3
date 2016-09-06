@@ -31,7 +31,7 @@ foreign import renderAxisImpl :: forall eff s d. (Existing s) =>
 
 -- scale = ffi ["scale", "axis", ""] "axis.scale(scale)"
 scale :: forall eff s d. (Scale s) => (s d Number) -> Axis -> Eff (d3::D3|eff) Axis
-scale = runEffFn2 scaleImpl
+scale scale axis = runEffFn2 scaleImpl scale axis -- SEARCHSTRING
 -- orient = ffi ["orientation", "axis", ""] "axis.orient(orientation)"
 orient :: forall eff. String -> Axis -> Eff (d3::D3|eff) Axis
 orient = runEffFn2 orientImpl
